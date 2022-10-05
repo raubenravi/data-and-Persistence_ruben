@@ -14,12 +14,13 @@ public class ReizigerDAOPsql implements ReizigerDao {
     AdressDAOPsql adressDAOPsql;
     Connection connection;
 
-    public ReizigerDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection) throws SQLException {
+    public ReizigerDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection, AdressDAOPsql adressDAOPsql) throws SQLException {
         this.connection = connection.getConnection();
+        this.adressDAOPsql = adressDAOPsql;
     }
 
     public boolean save(Reiziger reiziger) throws SQLException {
-        String q = "INSERT INTO public.reiziger(reiziger_id , voorletters, tussenvoegsel , achternaam, geboortedatum) " +
+        String q = "INSERT INTO public.reiziger(reiziger_id , voorletters, tussenvoegsels , achternaam, geboortedatum) " +
                 "VALUES(?, ?, ? , ?, ?) ;" ;
         PreparedStatement pst = connection.prepareStatement(q);
         pst.setInt(1, reiziger.reiziger_id);
@@ -33,7 +34,7 @@ public class ReizigerDAOPsql implements ReizigerDao {
 
     public boolean update(Reiziger reiziger) throws SQLException {
         String q = "UPDATE reiziger" +
-                "SET reiziger_id = ? , voorletters = ?, tussenvoegsel = ? , achternaam = ?, geboortedatum = ?" +
+                "SET reiziger_id = ? , voorletters = ?, tussenvoegsels = ? , achternaam = ?, geboortedatum = ?" +
                 "WHERE reiziger_id = ?;" ;
         PreparedStatement pst = connection.prepareStatement(q);
         pst.setInt(1, reiziger.reiziger_id);
@@ -80,7 +81,15 @@ public class ReizigerDAOPsql implements ReizigerDao {
         PreparedStatement pst = connection.prepareStatement(q);
         ResultSet resultSet = pst.executeQuery();
         while(resultSet.next()){
-            System.out.println(resultSet.getString(4));
+            int reiziger_id = resultSet.getInt(1);
+            String voorletters = resultSet.getString(2);
+            String tussenvoegel = resultSet.getString(3);
+            String achternaam = resultSet.getString(4);
+            java.sql.Date geboorteDatum = resultSet.getDate(5);
+            Reiziger reiziger = new Reiziger(reiziger_id, voorletters,tussenvoegel, achternaam, geboorteDatum, null);
+            Adress adress = adressDAOPsql.findByReiziger(reiziger);
+            reiziger.adress = adress;
+            lijst.add(reiziger);
         }
         return lijst;
     }

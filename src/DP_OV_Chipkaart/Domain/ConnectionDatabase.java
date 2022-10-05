@@ -11,7 +11,7 @@ public class ConnectionDatabase {
         private Connection connection;
 
         public ConnectionDatabaseIsntance() throws SQLException {
-            this.connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ovchip", "postgres", "borpe");
+            this.connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Ov_Database", "postgres", "borpe");
         }
 
         public Connection getConnection() {
