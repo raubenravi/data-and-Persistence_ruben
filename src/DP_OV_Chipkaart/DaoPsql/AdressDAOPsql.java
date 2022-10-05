@@ -1,22 +1,26 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+package DP_OV_Chipkaart.DaoPsql;
+
+import DP_OV_Chipkaart.Dao.AdressDao;
+import DP_OV_Chipkaart.Domain.Adress;
+import DP_OV_Chipkaart.Domain.ConnectionDatabase;
+import DP_OV_Chipkaart.Domain.Reiziger;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdressDAOPsql implements AdressDao {
 
     Connection connection;
-    public AdressDAOPsql() throws SQLException {
-         this.connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ovchip", "postgres", "borpe");
+    public AdressDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection) throws SQLException {
+         this.connection = connection.getConnection();
     }
 
     public boolean save(Adress adress) throws SQLException {
         String q = "INSERT INTO public.reiziger(reiziger_id , postcode, huisnummer , straat, woonplaats) " +
                 "VALUES(?, ?, ? , ?, ?) ;" ;
         PreparedStatement pst = connection.prepareStatement(q);
-        pst.setInt(1, adress.reiziger_id);
+        pst.setInt(1, adress.reiziger.reiziger_id);
         pst.setString(2, adress.postcode);
         pst.setString(3, adress.huisnummer);
         pst.setString(4, adress.straat);
@@ -30,12 +34,12 @@ public class AdressDAOPsql implements AdressDao {
                 "SET reiziger_id = ? , postcode = ?, huisnummer = ? , straat = ?, woonplaats = ?" +
                 "WHERE reiziger_id = ?;" ;
         PreparedStatement pst = connection.prepareStatement(q);
-        pst.setInt(1, adress.reiziger_id);
+        pst.setInt(1, adress.adress_id);
         pst.setString(2, adress.postcode);
         pst.setString(3, adress.huisnummer);
         pst.setString(4, adress.straat);
         pst.setString(5, adress.woonplaats);
-        pst.setInt(6, adress.reiziger_id);
+        pst.setInt(6, adress.reiziger.reiziger_id);
         pst.execute();
         return true;
     }
@@ -44,8 +48,20 @@ public class AdressDAOPsql implements AdressDao {
         return false;
     }
 
-    public Reiziger findById(int id) {
-        return null;
+    public Adress findByReiziger(Reiziger reiziger) throws SQLException {
+        String q = "Select * FROM adres WHERE reiziger_id = ?";
+        PreparedStatement pst = connection.prepareStatement(q);
+        pst.setInt(1, reiziger.reiziger_id);
+        ResultSet resultSet = pst.executeQuery();
+//        while(resultSet.next()){
+        int adres_id   = resultSet.getInt(1);
+        String postcode   = resultSet.getString(2);
+        String huisnummer   = resultSet.getString(3);
+        String straat   = resultSet.getString(4);
+        String woonplaats = resultSet.getString(5);
+        //}
+        return new Adress(adres_id, postcode, huisnummer, straat, woonplaats, reiziger);
+
     }
 
     public Reiziger findByGbdatum(int id) {

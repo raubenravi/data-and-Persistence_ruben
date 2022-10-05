@@ -1,3 +1,5 @@
+package DP_OV_Chipkaart.Domain;
+
 public class Reiziger {
     public Integer reiziger_id;
     public String voorletters;

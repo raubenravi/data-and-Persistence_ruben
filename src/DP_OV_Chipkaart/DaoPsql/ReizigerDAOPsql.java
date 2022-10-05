@@ -1,13 +1,21 @@
-import java.security.PublicKey;
+package DP_OV_Chipkaart.DaoPsql;
+
+import DP_OV_Chipkaart.Domain.Adress;
+import DP_OV_Chipkaart.Dao.ReizigerDao;
+import DP_OV_Chipkaart.Domain.ConnectionDatabase;
+import DP_OV_Chipkaart.Domain.Reiziger;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDao {
 
+
+    AdressDAOPsql adressDAOPsql;
     Connection connection;
-    public ReizigerDAOPsql() throws SQLException {
-         this.connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ovchip", "postgres", "borpe");
+
+    public ReizigerDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection) throws SQLException {
+        this.connection = connection.getConnection();
     }
 
     public boolean save(Reiziger reiziger) throws SQLException {
@@ -42,8 +50,24 @@ public class ReizigerDAOPsql implements ReizigerDao {
         return false;
     }
 
-    public Reiziger findById(int id) {
-        return null;
+    public Reiziger findById(int id) throws Exception {
+        String q = "Select * FROM reiziger WHERE reiziger_id = ?";
+        PreparedStatement pst = connection.prepareStatement(q);
+        pst.setInt(1, id);
+        ResultSet resultSet = pst.executeQuery();
+         resultSet.next();
+             int reiziger_id = resultSet.getInt(1);
+             String voorletters = resultSet.getString(2);
+             String tussenvoegel = resultSet.getString(3);
+             String achternaam = resultSet.getString(4);
+             java.sql.Date geboorteDatum = resultSet.getDate(5);
+             if (reiziger_id != resultSet.getInt(6)) {
+                 throw new Exception("Search id en id in result from data base are not the same");
+         }
+            Reiziger reiziger = new Reiziger(reiziger_id, voorletters,tussenvoegel, achternaam, geboorteDatum, null);
+            Adress adress = adressDAOPsql.findByReiziger(reiziger);
+            reiziger.adress = adress;
+        return reiziger;
     }
 
     public Reiziger findByGbdatum(int id) {
@@ -54,12 +78,10 @@ public class ReizigerDAOPsql implements ReizigerDao {
         List<Reiziger> lijst = new ArrayList<>();
         String q = "Select * FROM reiziger" ;
         PreparedStatement pst = connection.prepareStatement(q);
-       ResultSet resultSet = pst.executeQuery();
-       while(resultSet.next()){
-           System.out.println(resultSet.getString(4));
-       }
-
-
-            return lijst;
+        ResultSet resultSet = pst.executeQuery();
+        while(resultSet.next()){
+            System.out.println(resultSet.getString(4));
         }
+        return lijst;
+    }
 }
