@@ -21,7 +21,7 @@ public class ReizigerDAOPsql implements ReizigerDao {
 
     public boolean save(Reiziger reiziger) throws SQLException {
         String q = "INSERT INTO public.reiziger(reiziger_id , voorletters, tussenvoegsels , achternaam, geboortedatum) " +
-                "VALUES(?, ?, ? , ?, ?) ;" ;
+                "VALUES(?, ?, ? , ?, ?) ;";
         PreparedStatement pst = connection.prepareStatement(q);
         pst.setInt(1, reiziger.reiziger_id);
         pst.setString(2, reiziger.voorletters);
@@ -33,9 +33,9 @@ public class ReizigerDAOPsql implements ReizigerDao {
     }
 
     public boolean update(Reiziger reiziger) throws SQLException {
-        String q = "UPDATE reiziger" +
+        String q = "UPDATE reiziger " +
                 "SET reiziger_id = ? , voorletters = ?, tussenvoegsels = ? , achternaam = ?, geboortedatum = ?" +
-                "WHERE reiziger_id = ?;" ;
+                "WHERE reiziger_id = ?;";
         PreparedStatement pst = connection.prepareStatement(q);
         pst.setInt(1, reiziger.reiziger_id);
         pst.setString(2, reiziger.voorletters);
@@ -47,10 +47,13 @@ public class ReizigerDAOPsql implements ReizigerDao {
         return true;
     }
 
-    public boolean delete(Reiziger reiziger) {
-        return false;
-    }
-
+    public boolean delete(Reiziger reiziger) throws SQLException {
+        String q = "DELETE FROM reiziger WHERE reiziger_id = ?;";
+        PreparedStatement pst = connection.prepareStatement(q);
+        pst.setInt(1,reiziger.reiziger_id);
+        pst.execute();
+        return true;
+}
     public Reiziger findById(int id) throws Exception {
         String q = "Select * FROM reiziger WHERE reiziger_id = ?";
         PreparedStatement pst = connection.prepareStatement(q);
