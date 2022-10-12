@@ -10,6 +10,5 @@ public interface  OvChipkaartDao {
     boolean update(OvChipKaart ovKaart) throws SQLException;
     boolean delete(OvChipKaart ovKaart);
     OvChipKaart findById(int id) throws Exception;
-    OvChipKaart findByGbdatum(int id);
     List<OvChipKaart> findAll() throws SQLException;
 }

@@ -70,9 +70,6 @@ public class AdressDAOPsql implements AdressDao {
 
     }
 
-    public Reiziger findByGbdatum(int id) {
-        return null;
-    }
 
     public List<Adress> findAll() throws SQLException {
         List<Adress> lijst = new ArrayList<>();

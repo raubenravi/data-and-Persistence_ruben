@@ -4,10 +4,13 @@ import java.util.List;
 
 public class OvChipKaart {
     public int kaart_nummer;
+    public  int klasse;
     public java.sql.Date getlig_tot;
     public int saldo;
-    public List<Reiziger> reizigers;
+    public Reiziger reiziger;
 
-    public OvChipKaart(int kaartNummer, java.sql.Date getlig_tot, List<Reiziger> reizigers){
+    public List<Product> products;
+
+    public OvChipKaart(int kaartNummer, java.sql.Date getlig_tot, Reiziger reiziger){
     }
 }
