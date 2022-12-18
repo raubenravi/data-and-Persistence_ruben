@@ -63,21 +63,21 @@ SELECT
 (SELECT min(omschrijving) FROM daguitvoeringen) as min_uitvoering , 
 (SELECT min(omschrijving) FROM dagcursussen) as min_cursus,
 (SELECT max(omschrijving) FROM daguitvoeringen) as max_uitvoering , 
-(SELECT max(omschrijving) FROM dagcursussen) as max_cursus
+(SELECT max(omschrijving) FROM dagcursussen) as max_cursus;
 
 -- 3. Verwijder de views en laat zien wat de verschillen zijn bij DROP view <viewnaam> CASCADE en bij DROP view <viewnaam> RESTRICT
 
 -- Als ik dagcursussen wil dan mag dat niet want dag uitvoeringen is daar afhankelijk van
-DROP VIEW dagcursussen RESTRICT;
-SELECT * FROM dagcursussen 
+--DROP VIEW dagcursussen RESTRICT;
+SELECT * FROM dagcursussen ;
 
 DROP VIEW dagcursussen CASCADE;
 
 -- geen afhankelijk heden 
-DROP VIEW deelnemers RESTRICT;
+--DROP VIEW deelnemers RESTRICT;
 DROP VIEW personeel RESTRICT;
 
-DROP VIEW deelnemers CASCADE;
-DROP VIEW personeel CASCADE;
+--DROP VIEW deelnemers CASCADE;
+--DROP VIEW personeel CASCADE;
 
 

@@ -44,7 +44,7 @@ where naam ILIKE '% %';	 --mits er geen onodige spaties zijn op het einde of beg
 -- S4.3. 
 -- Geef nu code, begindatum en aantal inschrijvingen (`aantal_inschrijvingen`) van alle
 -- cursusuitvoeringen in 2019 met minstens drie inschrijvingen.
--- DROP VIEW IF EXISTS s4_3; CREATE OR REPLACE VIEW s4_3 AS                                                     -- [TEST]
+DROP VIEW IF EXISTS s4_3; CREATE OR REPLACE VIEW s4_3 AS                                                     -- [TEST]
 select cursus, begindatum , count(*) as aantal_inschrijvingen from inschrijvingen
 where date_part('year',  begindatum ) = 2019 -- = year(to_date('2019-01-01', 'yyyy-mm-dd'))
 GROUP by cursus , begindatum

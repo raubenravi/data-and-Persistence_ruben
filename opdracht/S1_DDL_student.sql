@@ -71,7 +71,7 @@ INSERT INTO public.afdelingen(anr, naam, locatie, hoofd) VALUES(DEFAULT, 'QUALIT
 -- Maak een tabel `adressen`, waarin de adressen van de medewerkers worden
 -- opgeslagen (inclusief adreshistorie). De tabel bestaat uit onderstaande
 -- kolommen. Voeg minimaal één rij met adresgegevens van A DONK toe.
---
+
 --    postcode      PK, bestaande uit 6 karakters (4 cijfers en 2 letters)
 --    huisnummer    PK
 --    ingangsdatum  PK
@@ -79,10 +79,10 @@ INSERT INTO public.afdelingen(anr, naam, locatie, hoofd) VALUES(DEFAULT, 'QUALIT
 --    telefoon      10 cijfers, uniek
 --    med_mnr       FK, verplicht
 
--- CREATE TYPE  POSTCODE AS (
---     nummer	NUMERIC(4),
---     letters     CHAR(2)
--- );
+CREATE TYPE  POSTCODE AS (
+    nummer	NUMERIC(4),
+    letters     CHAR(2)
+);
 
 CREATE TABLE  adressen (
     postcode POSTCODE ,
@@ -125,11 +125,11 @@ SELECT 'S1.5 wordt niet getest: handmatige test beschikbaar.' AS resultaat
 ORDER BY resultaat;
 
 
--- Draai alle wijzigingen terug om conflicten in komende opdrachten te voorkomen.
--- DROP TABLE IF EXISTS adressen;
--- UPDATE medewerkers SET afd = NULL WHERE mnr < 7369 OR mnr > 7934;
--- UPDATE afdelingen SET hoofd = NULL WHERE anr > 40;
--- DELETE FROM afdelingen WHERE anr > 40;
--- DELETE FROM medewerkers WHERE mnr < 7369 OR mnr > 7934;
--- ALTER TABLE medewerkers DROP CONSTRAINT IF EXISTS m_geslacht_chk;
--- ALTER TABLE medewerkers DROP COLUMN IF EXISTS geslacht;
+Draai alle wijzigingen terug om conflicten in komende opdrachten te voorkomen.
+DROP TABLE IF EXISTS adressen;
+UPDATE medewerkers SET afd = NULL WHERE mnr < 7369 OR mnr > 7934;
+UPDATE afdelingen SET hoofd = NULL WHERE anr > 40;
+DELETE FROM afdelingen WHERE anr > 40;
+DELETE FROM medewerkers WHERE mnr < 7369 OR mnr > 7934;
+ALTER TABLE medewerkers DROP CONSTRAINT IF EXISTS m_geslacht_chk;
+ALTER TABLE medewerkers DROP COLUMN IF EXISTS geslacht;

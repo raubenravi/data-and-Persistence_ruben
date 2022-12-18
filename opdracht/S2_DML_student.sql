@@ -48,7 +48,7 @@ SELECT * FROM medewerkers ORDER By functie, gbdatum DESC;
 -- code en begindatum.
 DROP VIEW IF EXISTS s2_3; CREATE OR REPLACE VIEW s2_3 AS                                                     -- [TEST]
 --SELECT code , locatie  FROM cursussen WHere locatie='Utrecht' or locatie='Maastricht';
-SELECT cursus, begindatum FROM public.uitvoeringen WHERE locatie='MAASTRICHT' OR locatie='UTRECHT';
+SELECT cursus, begindatum FROM uitvoeringen WHERE locatie='MAASTRICHT' OR locatie='UTRECHT';
 
 -- S2.4. Namen
 --
@@ -67,7 +67,7 @@ WHERE voorl='R' AND naam='JANSEN';
 -- komende 2 maart. De cursus wordt gegeven in Leerdam door Nick Smit.
 -- Voeg deze gegevens toe.
 --INSERT
-INSERT INTO public.uitvoeringen(cursus, begindatum, docent, locatie)
+INSERT INTO uitvoeringen(cursus, begindatum, docent, locatie)
 VALUES('S02', to_date('2023-03-02', 'YYYY-MM-DD') , '7369', 'LEERDAM')
 ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
@@ -75,7 +75,7 @@ ON CONFLICT DO NOTHING;                                                         
 --
 -- Neem één van je collega-studenten aan als stagiair ('STAGIAIR') en
 -- voer zijn of haar gegevens in. Kies een personeelnummer boven de 8000.
-INSERT INTO public.medewerkers(mnr, naam, voorl, functie, gbdatum, maandsal)VALUES('8001', 'VAN ORANJE' , 'W', 'STAGIAIR', '1533-04-24', 500)
+INSERT INTO medewerkers(mnr, naam, voorl, functie, gbdatum, maandsal)VALUES('8001', 'VAN ORANJE' , 'W', 'STAGIAIR', '1533-04-24', 500)
 ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
 -- S2.7. Nieuwe schaal
@@ -92,13 +92,24 @@ ON CONFLICT DO NOTHING;                                                         
 -- Voeg deze cursus met code 'D&P' toe, maak twee uitvoeringen in Leerdam en schrijf drie
 -- mensen in.
 --INSERT
---ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+INSERT INTO cursussen (code, omschrijving, type, lengte)
+VALUES ('D&P', 'Data & Persistency', 'BLD', 6)
+ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 --INSERT
---ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
---INSERT
---ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
---INSERT
---ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+INSERT INTO uitvoeringen (cursus, begindatum, docent, locatie)
+VALUES ('D&P', to_date('2022-12-1', 'YYYY-MM-DD'), 7369, 'LEERDAM'),
+       ('D&P', to_date('2023-01-01', 'YYYY-MM-DD'), 7369, 'LEERDAM')
+ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+INSERT INTO inschrijvingen (cursist, cursus, begindatum)
+VALUES (7369, 'D&P', to_date('2022-12-1', 'YYYY-MM-DD')),
+       (7499, 'D&P', to_date('2022-12-1', 'YYYY-MM-DD')),
+       (7521, 'D&P', to_date('2022-12-1', 'YYYY-MM-DD'))
+ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+INSERT INTO inschrijvingen (cursist, cursus, begindatum)
+VALUES (7788, 'D&P', to_date('2023-01-01', 'YYYY-MM-DD')),
+       (7839, 'D&P', to_date('2023-01-01', 'YYYY-MM-DD')),
+       (7844, 'D&P', to_date('2023-01-01', 'YYYY-MM-DD'))
+ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 --INSERT
 --ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 --INSERT
@@ -110,28 +121,34 @@ ON CONFLICT DO NOTHING;                                                         
 -- De medewerkers van de afdeling VERKOOP krijgen een salarisverhoging
 -- van 5.5%, behalve de manager van de afdeling, deze krijgt namelijk meer: 7%.
 -- Voer deze verhogingen door.
+UPDATE medewerkers SET maandsal = (maandsal * 1.055) WHERE afd = 30 AND functie != 'MANAGER';;
 
+UPDATE medewerkers SET maandsal = (maandsal * 1.07) WHERE afd = 30 AND functie = 'MANAGER';
 
 -- S2.10. Concurrent
---
+DELETE FROM medewerkers WHERE mnr = 7654;
 -- Martens heeft als verkoper succes en wordt door de concurrent
 -- weggekocht. Verwijder zijn gegevens.
 
 -- Zijn collega Alders heeft ook plannen om te vertrekken. Verwijder ook zijn gegevens.
 -- Waarom lukt dit (niet)?
-
+-- heeft refernties met andere tabellen dus moet CASCADE gebruikt worden
 
 -- S2.11. Nieuwe afdeling
 --
 -- Je wordt hoofd van de nieuwe afdeling 'FINANCIEN' te Leerdam,
 -- onder de hoede van De Koning. Kies een personeelnummer boven de 8000.
 -- Zorg voor de juiste invoer van deze gegevens.
---INSERT
---ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+insert into medewerkers (mnr,naam,voorl,functie,chef,gbdatum,maandsal,comm,afd) 
+values (8022,'RAJAN','R','HOOFD',7839, to_date('1997-10-20', 'yyyy-mm-dd'),2850, 150 ,40)
+ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
---INSERT
---ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
 
+insert INTO afdelingen(anr,naam, locatie, hoofd)
+VALUES(50, 'FINANCIEN', 'HUIZEN', 8022)
+ON CONFLICT DO NOTHING;                                                                                         -- [TEST]
+
+UPDATE medewerkers SET afd = 50 WHERE mnr = 8022;
 
 
 -- -------------------------[ HU TESTRAAMWERK ]--------------------------------
@@ -154,21 +171,21 @@ SELECT * FROM test_exists('S2.7', 6) AS resultaat
 ORDER BY resultaat;
 
 
--- Draai alle wijzigingen terug om conflicten in komende opdrachten te voorkomen.
--- UPDATE medewerkers SET afd = NULL WHERE mnr < 7369 OR mnr > 7934;
--- UPDATE afdelingen SET hoofd = NULL WHERE anr > 40;
--- DELETE FROM afdelingen WHERE anr > 40;
--- DELETE FROM medewerkers WHERE mnr < 7369 OR mnr > 7934;
--- DELETE FROM inschrijvingen WHERE cursus = 'D&P';
--- DELETE FROM uitvoeringen WHERE cursus = 'D&P';
--- DELETE FROM cursussen WHERE code = 'D&P';
--- DELETE FROM uitvoeringen WHERE locatie = 'LEERDAM';
--- --INSERT INTO medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal, comm, afd)
--- --VALUES (7654, 'MARTENS', 'P', 'VERKOPER', 7698, '28-09-1976', 1250, 1400, 30);
--- INSERT INTO medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal, comm, afd)
--- VALUES (7654, 'MARTENS', 'P', 'VERKOPER', 7698, '1976-09-28', 1250, 1400, 30);
--- UPDATE medewerkers SET maandsal = 1600 WHERE mnr = 7499;
--- UPDATE medewerkers SET maandsal = 1250 WHERE mnr = 7521;
--- UPDATE medewerkers SET maandsal = 2850 WHERE mnr = 7698;
--- UPDATE medewerkers SET maandsal = 1500 WHERE mnr = 7844;
--- UPDATE medewerkers SET maandsal = 800 WHERE mnr = 7900;
+--Draai alle wijzigingen terug om conflicten in komende opdrachten te voorkomen.
+UPDATE medewerkers SET afd = NULL WHERE mnr < 7369 OR mnr > 7934;
+UPDATE afdelingen SET hoofd = NULL WHERE anr > 40;
+DELETE FROM afdelingen WHERE anr > 40;
+DELETE FROM medewerkers WHERE mnr < 7369 OR mnr > 7934;
+DELETE FROM inschrijvingen WHERE cursus = 'D&P';
+DELETE FROM uitvoeringen WHERE cursus = 'D&P';
+DELETE FROM cursussen WHERE code = 'D&P';
+DELETE FROM uitvoeringen WHERE locatie = 'LEERDAM';
+--INSERT INTO medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal, comm, afd)
+--VALUES (7654, 'MARTENS', 'P', 'VERKOPER', 7698, '28-09-1976', 1250, 1400, 30);
+INSERT INTO medewerkers (mnr, naam, voorl, functie, chef, gbdatum, maandsal, comm, afd)
+VALUES (7654, 'MARTENS', 'P', 'VERKOPER', 7698, to_date('1976-09-28' , 'yyyy-09-28'), 1250, 1400, 30);
+UPDATE medewerkers SET maandsal = 1600 WHERE mnr = 7499;
+UPDATE medewerkers SET maandsal = 1250 WHERE mnr = 7521;
+UPDATE medewerkers SET maandsal = 2850 WHERE mnr = 7698;
+UPDATE medewerkers SET maandsal = 1500 WHERE mnr = 7844;
+UPDATE medewerkers SET maandsal = 800 WHERE mnr = 7900;
