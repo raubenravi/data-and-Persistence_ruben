@@ -9,7 +9,7 @@ import java.util.List;
 public interface AdressDao {
     boolean save(Adress Adress) throws SQLException;
     boolean update(Adress Adress) throws SQLException;
-    boolean delete(Adress Adress);
+    boolean delete(Adress Adress) throws SQLException;
     Adress findByReiziger(Reiziger reiziger) throws SQLException;
     List<Adress> findAll() throws SQLException;
 }

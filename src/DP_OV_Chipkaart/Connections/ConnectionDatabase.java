@@ -1,4 +1,4 @@
-package DP_OV_Chipkaart.Domain;
+package DP_OV_Chipkaart.Connections;
 
 import DP_OV_Chipkaart.DaoPsql.AdressDAOPsql;
 

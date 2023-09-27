@@ -1,9 +1,12 @@
 package DP_OV_Chipkaart.DaoPsql;
 
+import DP_OV_Chipkaart.Dao.OvChipkaartDao;
 import DP_OV_Chipkaart.Domain.Adress;
 import DP_OV_Chipkaart.Dao.ReizigerDao;
-import DP_OV_Chipkaart.Domain.ConnectionDatabase;
+import DP_OV_Chipkaart.Connections.ConnectionDatabase;
+import DP_OV_Chipkaart.Domain.OvChipKaart;
 import DP_OV_Chipkaart.Domain.Reiziger;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,65 +15,97 @@ public class ReizigerDAOPsql implements ReizigerDao {
 
 
     AdressDAOPsql adressDAOPsql;
+    OvChipkaartDao ovChipKaartDao;
     Connection connection;
 
-    public ReizigerDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection, AdressDAOPsql adressDAOPsql) throws SQLException {
+    public ReizigerDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection, AdressDAOPsql adressDAOPsql, OvChipkaartDao ovChipKaartDao) throws SQLException {
         this.connection = connection.getConnection();
         this.adressDAOPsql = adressDAOPsql;
+        this.ovChipKaartDao = ovChipKaartDao;
     }
 
     public boolean save(Reiziger reiziger) throws SQLException {
-        String q = "INSERT INTO public.reiziger(reiziger_id , voorletters, tussenvoegsels , achternaam, geboortedatum) " +
-                "VALUES(?, ?, ? , ?, ?) ;";
-        PreparedStatement pst = connection.prepareStatement(q);
-        pst.setInt(1, reiziger.reiziger_id);
-        pst.setString(2, reiziger.voorletters);
-        pst.setString(3, reiziger.tussenvoegel);
-        pst.setString(4, reiziger.achternaam);
-        pst.setDate(5, reiziger.geboorteDatum);
-        pst.execute();
+        try {
+            String q = "INSERT INTO public.reiziger(reiziger_id , voorletters, tussenvoegsel , achternaam, geboortedatum) " +
+                    "VALUES(?, ?, ? , ?, ?) ;";
+            PreparedStatement pst = connection.prepareStatement(q);
+            pst.setInt(1, reiziger.getId());
+            pst.setString(2, reiziger.getVoorletters());
+            pst.setString(3, reiziger.getTussenvoegel());
+            pst.setString(4, reiziger.getAchternaam());
+            pst.setDate(5, reiziger.getGeboorteDatum());
+            pst.execute();
+            pst.close();
+        }catch(Exception e) {
+         System.out.println(e);
+         return false;
+        }
+
         return true;
     }
 
     public boolean update(Reiziger reiziger) throws SQLException {
-        String q = "UPDATE reiziger " +
-                "SET reiziger_id = ? , voorletters = ?, tussenvoegsels = ? , achternaam = ?, geboortedatum = ?" +
-                "WHERE reiziger_id = ?;";
-        PreparedStatement pst = connection.prepareStatement(q);
-        pst.setInt(1, reiziger.reiziger_id);
-        pst.setString(2, reiziger.voorletters);
-        pst.setString(3, reiziger.tussenvoegel);
-        pst.setString(4, reiziger.achternaam);
-        pst.setDate(5, reiziger.geboorteDatum);
-        pst.setInt(6, reiziger.reiziger_id);
-        pst.execute();
-        return true;
+        try {
+            String q = "UPDATE reiziger " +
+                    "SET reiziger_id = ? , voorletters = ?, tussenvoegsel = ? , achternaam = ?, geboortedatum = ?" +
+                    "WHERE reiziger_id = ?;";
+            PreparedStatement pst = connection.prepareStatement(q);
+            pst.setInt(1, reiziger.getId());
+            pst.setString(2, reiziger.getVoorletters());
+            pst.setString(3, reiziger.getTussenvoegel());
+            pst.setString(4, reiziger.getAchternaam());
+            pst.setDate(5, reiziger.getGeboorteDatum());
+            pst.setInt(6, reiziger.getId());
+            pst.execute();
+            pst.close();
+            return true;
+        }catch (Exception e){
+            return  false;
+        }
     }
 
     public boolean delete(Reiziger reiziger) throws SQLException {
-        String q = "DELETE FROM reiziger WHERE reiziger_id = ?;";
-        PreparedStatement pst = connection.prepareStatement(q);
-        pst.setInt(1,reiziger.reiziger_id);
-        pst.execute();
+        adressDAOPsql.delete(reiziger.getAdress());
+
+
+        if(reiziger.getOvkaarten().isEmpty() == false){
+            for(OvChipKaart ovkaart : reiziger.getOvkaarten()){
+                ovChipKaartDao.delete(ovkaart);
+            }
+        }
+
+
+        try {
+            String q = "DELETE  FROM reiziger WHERE reiziger_id = ?;";
+            PreparedStatement pst = connection.prepareStatement(q);
+            pst.setInt(1,reiziger.getId());
+            pst.execute();
+            pst.close();
+        } catch(Exception e) {
+            System.out.println(e);
+            return false;
+        }
         return true;
+
 }
     public Reiziger findById(int id) throws Exception {
         String q = "Select * FROM reiziger WHERE reiziger_id = ?";
         PreparedStatement pst = connection.prepareStatement(q);
         pst.setInt(1, id);
         ResultSet resultSet = pst.executeQuery();
-         resultSet.next();
-             int reiziger_id = resultSet.getInt(1);
-             String voorletters = resultSet.getString(2);
-             String tussenvoegel = resultSet.getString(3);
-             String achternaam = resultSet.getString(4);
-             java.sql.Date geboorteDatum = resultSet.getDate(5);
-             if (reiziger_id != resultSet.getInt(6)) {
-                 throw new Exception("Search id en id in result from data base are not the same");
-         }
-            Reiziger reiziger = new Reiziger(reiziger_id, voorletters,tussenvoegel, achternaam, geboorteDatum, null);
-            Adress adress = adressDAOPsql.findByReiziger(reiziger);
-            reiziger.adress = adress;
+        resultSet.next();
+        int reiziger_id = resultSet.getInt(1);
+        String voorletters = resultSet.getString(2);
+        String tussenvoegel = resultSet.getString(3);
+        String achternaam = resultSet.getString(4);
+        java.sql.Date geboorteDatum = resultSet.getDate(5);
+        Reiziger reiziger = new Reiziger(reiziger_id, voorletters,tussenvoegel, achternaam, geboorteDatum, null);
+        Adress adress = adressDAOPsql.findByReiziger(reiziger);
+        reiziger.setAdress(adress);
+
+        List<OvChipKaart> ovkaarten = ovChipKaartDao.findByReiziger(reiziger);
+        reiziger.setOvkaarten(ovkaarten);
+        pst.close();
         return reiziger;
     }
 
@@ -91,9 +126,10 @@ public class ReizigerDAOPsql implements ReizigerDao {
             java.sql.Date geboorteDatum = resultSet.getDate(5);
             Reiziger reiziger = new Reiziger(reiziger_id, voorletters,tussenvoegel, achternaam, geboorteDatum, null);
             Adress adress = adressDAOPsql.findByReiziger(reiziger);
-            reiziger.adress = adress;
+            reiziger.setAdress(adress);
             lijst.add(reiziger);
         }
+        pst.close();
         return lijst;
     }
 }
