@@ -35,6 +35,14 @@ public class ReizigerDAOPsql implements ReizigerDao {
             pst.setString(4, reiziger.getAchternaam());
             pst.setDate(5, reiziger.getGeboorteDatum());
             pst.execute();
+
+            //adres controleren al het bestaat, zo ja update anders save
+            //TODO controleren met printen enzo
+            if(adressDAOPsql.findByReiziger(reiziger) != null){
+                adressDAOPsql.save(reiziger.getAdress());
+            }
+
+            //adres controleren al het bestaat, zo ja update anders save
             pst.close();
         }catch(Exception e) {
          System.out.println(e);
@@ -46,6 +54,9 @@ public class ReizigerDAOPsql implements ReizigerDao {
 
     public boolean update(Reiziger reiziger) throws SQLException {
         try {
+
+            Adress oudAdress = adressDAOPsql.findByReiziger(reiziger);
+
             String q = "UPDATE reiziger " +
                     "SET reiziger_id = ? , voorletters = ?, tussenvoegsel = ? , achternaam = ?, geboortedatum = ?" +
                     "WHERE reiziger_id = ?;";
@@ -58,8 +69,17 @@ public class ReizigerDAOPsql implements ReizigerDao {
             pst.setInt(6, reiziger.getId());
             pst.execute();
             pst.close();
+
+            Adress nieuwAdress = reiziger.getAdress();
+            if (oudAdress.getId() != nieuwAdress.getId() ) {
+            adressDAOPsql.delete(oudAdress);
+            adressDAOPsql.save(nieuwAdress);
+        }
+
+
             return true;
         }catch (Exception e){
+            System.out.println(e);
             return  false;
         }
     }
@@ -109,8 +129,22 @@ public class ReizigerDAOPsql implements ReizigerDao {
         return reiziger;
     }
 
-    public Reiziger findByGbdatum(int id) {
-        return null;
+    public Reiziger findByGbdatum(java.sql.Date gbDatum) throws SQLException {
+        String q = "Select * FROM reiziger WHERE = geboortedatum = ?";
+        PreparedStatement pst = connection.prepareStatement(q);
+        pst.setDate(1, gbDatum);
+        ResultSet resultSet = pst.executeQuery();
+        resultSet.next();
+        int reiziger_id = resultSet.getInt(1);
+        String voorletters = resultSet.getString(2);
+        String tussenvoegel = resultSet.getString(3);
+        String achternaam = resultSet.getString(4);
+        java.sql.Date geboorteDatum = resultSet.getDate(5);
+        Reiziger reiziger = new Reiziger(reiziger_id, voorletters,tussenvoegel, achternaam, geboorteDatum, null);
+        Adress adress = adressDAOPsql.findByReiziger(reiziger);
+        reiziger.setAdress(adress);
+        pst.close();
+        return reiziger;
     }
 
     public List<Reiziger> findAll() throws SQLException {

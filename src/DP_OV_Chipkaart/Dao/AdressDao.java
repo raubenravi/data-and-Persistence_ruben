@@ -11,5 +11,5 @@ public interface AdressDao {
     boolean update(Adress Adress) throws SQLException;
     boolean delete(Adress Adress) throws SQLException;
     Adress findByReiziger(Reiziger reiziger) throws SQLException;
-    List<Adress> findAll() throws SQLException;
+    List<Adress> findAll() throws Exception;
 }

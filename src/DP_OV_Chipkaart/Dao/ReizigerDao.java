@@ -10,6 +10,6 @@ public interface  ReizigerDao {
     boolean update(Reiziger reiziger) throws SQLException;
     boolean delete(Reiziger reiziger) throws SQLException;
     Reiziger findById(int id) throws Exception;
-    Reiziger findByGbdatum(int id);
+    Reiziger findByGbdatum(java.sql.Date gbDatum) throws SQLException;
     List<Reiziger> findAll() throws SQLException;
 }

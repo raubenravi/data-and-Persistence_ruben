@@ -25,10 +25,10 @@ public class Main {
             String tussenvoegsel = resultSet.getString(3);
             String achternaam = resultSet.getString(4);
             java.sql.Date geboorteDatum = resultSet.getDate(5);
-            System.out.println(reiziger_id + " " + voorletters + " " + (tussenvoegsel == null ? "" : tussenvoegsel)  + " " + achternaam + " " + geboorteDatum);
+            System.out.println(reiziger_id + " " + voorletters + " " + (tussenvoegsel == null ? "" : tussenvoegsel)  + " " + achternaam + " (" + geboorteDatum + ")");
         }
         pst.close();
-/*
+
         String gbdatum = "1981-03-14";
         Adress adress = new Adress(25, "1122BB", "22a", "KorteStraat", "London", null);
         Reiziger sietske = new Reiziger(80, "S", "a", "Boers", java.sql.Date.valueOf(gbdatum), adress);
@@ -41,17 +41,17 @@ public class Main {
 
 
 
-       // Reiziger sietske = new Reiziger(77, "S", "a", "Boers", java.sql.Date.valueOf(gbdatum), adress);
+        //Reiziger sietske = new Reiziger(77, "S", "a", "Boers", java.sql.Date.valueOf(gbdatum), adress);
         adressJan.setReiziger(sietske);
-        ProductDaoPsql productDao = new ProductDaoPsql(connenction);
-        OvChipKaartDaoPsql ovChipkaartDao = new OvChipKaartDaoPsql(connenction, productDao, null);
-        AdressDAOPsql adressDAOPsql = new AdressDAOPsql(connenction);
-        ReizigerDAOPsql daoReiziger = new ReizigerDAOPsql(connenction, adressDAOPsql, ovChipkaartDao);
+        ProductDaoPsql productDao = new ProductDaoPsql(connection);
+        OvChipKaartDaoPsql ovChipkaartDao = new OvChipKaartDaoPsql(connection, productDao, null);
+        AdressDAOPsql adressDAOPsql = new AdressDAOPsql(connection);
+        ReizigerDAOPsql daoReiziger = new ReizigerDAOPsql(connection, adressDAOPsql, ovChipkaartDao);
         ovChipkaartDao.setReizigerDAOPsql(daoReiziger);
-        System.out.println(ovChipkaartDao.findById(35283).saldo);
+        System.out.println(ovChipkaartDao.findById(35283).getSaldo());
         daoReiziger.save(jan);
-        jan.ovkaarten = ovChipkaartDao.findByReiziger(jan);
-        for(OvChipKaart ovkaart : jan.ovkaarten){
+        jan.setOvkaarten( ovChipkaartDao.findByReiziger(jan)) ;
+        for(OvChipKaart ovkaart : jan.getOvkaarten()){
             System.out.println(ovkaart);
         }
 
@@ -74,7 +74,7 @@ public class Main {
         for (Reiziger reizigerOut : list2) {
             System.out.println(reizigerOut.toString());
         }
-        jan.achternaam = "Lange Pet";
+        jan.setAchternaam("Lange Pet");
        // daoReiziger.update(jan);
         daoReiziger.delete(sietske);
         List<Reiziger> list = daoReiziger.findAll();
@@ -84,7 +84,7 @@ public class Main {
         daoReiziger.delete(jan);
 
         //daoReiziger.findAll();
-   */
+
     }
 }
 

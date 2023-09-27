@@ -11,9 +11,11 @@ import java.util.List;
 
 public class AdressDAOPsql implements AdressDao {
 
+    ReizigerDAOPsql reizigerDAOPsql;
     static Connection connection;
     public AdressDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection) throws SQLException {
          this.connection = connection.getConnection();
+         this.reizigerDAOPsql = reizigerDAOPsql;
     }
 
     public boolean save(Adress adress) throws SQLException {
@@ -77,17 +79,17 @@ public class AdressDAOPsql implements AdressDao {
             String huisnummer = resultSet.getString(3);
             String straat = resultSet.getString(4);
             String woonplaats = resultSet.getString(5);
-            //String reiziger_id = resultSet.getString(5);
+            int reiziger_id = resultSet.getInt(6);
             //}
             pst.close();
-            return new Adress(adres_id, postcode, huisnummer, straat, woonplaats, null);
+            return new Adress(adres_id, postcode, huisnummer, straat, woonplaats, reiziger);
         }catch (Exception e){
             return  null;
         }
     }
 
 
-    public List<Adress> findAll() throws SQLException {
+    public List<Adress> findAll() throws Exception {
         List<Adress> lijst = new ArrayList<>();
         String q = "Select * FROM adres" ;
         PreparedStatement pst = connection.prepareStatement(q);
@@ -98,8 +100,9 @@ public class AdressDAOPsql implements AdressDao {
             String huisnummer = resultSet.getString(3);
             String straat = resultSet.getString(4);
             String woonplaats = resultSet.getString(5);
-
-            lijst.add( new Adress(adress_id, postcode, huisnummer, straat, woonplaats, null));
+            int reiziger_id = resultSet.getInt(6);
+            Reiziger reiziger = reizigerDAOPsql.findById(reiziger_id);
+            lijst.add( new Adress(adress_id, postcode, huisnummer, straat, woonplaats, reiziger));
         }
         pst.close();
         return lijst;
