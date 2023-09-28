@@ -97,17 +97,23 @@ public class Main {
         Reiziger reiziger = rdao.findById(1);
         System.out.println(reiziger);
         Adres backupAdres = reiziger.getAdress();
-        Adres adres = new Adres(25, "1122BB", "22", "Korte Straat", "London", reiziger);
+        System.out.println("De reiziger gaat naar Groot Britanie verhuizen");
+        Adres adres = new Adres(25, "1122BB", "22", "Diagon Alley", "London", reiziger);
         reiziger.setAdress(adres);
         rdao.update(reiziger);
         reiziger = rdao.findById(1);
         System.out.println(reiziger);
-        adres.setStraat("Lange Straat");
+        System.out.print("De reiziger gaat wordt premie: ");
+        adres.setStraat("Downing street");
         adao.update(adres);
         reiziger = rdao.findById(1);
         System.out.println(reiziger);
+        System.out.println("test adao.findByReiziger: " + adao.findByReiziger(reiziger));
+        //brexit, terug naar nederland dan maar weer
         reiziger.setAdress(backupAdres);
         rdao.update(reiziger);
+
+        System.out.println();
 
         List<Adres> adressen = adao.findAll();
         System.out.println("[Test] AdresDAO.findAll() geeft de volgende adressen:");
@@ -115,6 +121,7 @@ public class Main {
             System.out.println(a.toString());
         }
         System.out.println();
+
 
 
     }

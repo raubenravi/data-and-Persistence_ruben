@@ -21,12 +21,12 @@ public class Reiziger {
         this.voorletters = voorletters;
     }
 
-    public String getTussenvoegel() {
-        return tussenvoegel;
+    public String getTussenvoegsel() {
+        return tussenvoegsel;
     }
 
-    public void setTussenvoegel(String tussenvoegel) {
-        this.tussenvoegel = tussenvoegel;
+    public void setTussenvoegsel(String tussenvoegsel) {
+        this.tussenvoegsel = tussenvoegsel;
     }
 
     public String getAchternaam() {
@@ -63,7 +63,7 @@ public class Reiziger {
 
     private int id;
     private String voorletters;
-    private String tussenvoegel;
+    private String tussenvoegsel;
     private String achternaam;
     private  java.sql.Date geboorteDatum;
 
@@ -75,7 +75,7 @@ public class Reiziger {
     public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, java.sql.Date geboorteDatum, Adres adres){
         this.id = id;
         this.voorletters = voorletters;
-        this.tussenvoegel = tussenvoegel;
+        this.tussenvoegsel = tussenvoegel;
         this.achternaam = achternaam;
         this.geboorteDatum = geboorteDatum;
         this.adres = adres;
@@ -84,7 +84,7 @@ public class Reiziger {
     public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, java.sql.Date geboorteDatum, Adres adres, List<OvChipKaart> ovkaarten) {
         this.id = id;
         this.voorletters = voorletters;
-        this.tussenvoegel = tussenvoegel;
+        this.tussenvoegsel = tussenvoegel;
         this.achternaam = achternaam;
         this.geboorteDatum = geboorteDatum;
         this.adres = adres;
@@ -94,7 +94,7 @@ public class Reiziger {
         return  toStringZonderAssocatie() +  (this.adres != null ? this.adres.toStringZonderAssocatie() : "");
     }
     public String toStringZonderAssocatie(){
-        return  "Reiziger{"  +String.valueOf(this.id) + " " + this.voorletters  + " " + this.tussenvoegel + " " + this.achternaam + " " + this.geboorteDatum + "}";
+        return  "Reiziger{"  +String.valueOf(this.id) + " " + this.voorletters  + " " +  (this.tussenvoegsel == null ? "" : this.tussenvoegsel)  + " " + this.achternaam + " " + this.geboorteDatum + "}";
     }
 }
 

@@ -31,7 +31,7 @@ public class ReizigerDAOPsql implements ReizigerDao {
             PreparedStatement pst = connection.prepareStatement(q);
             pst.setInt(1, reiziger.getId());
             pst.setString(2, reiziger.getVoorletters());
-            pst.setString(3, reiziger.getTussenvoegel());
+            pst.setString(3, reiziger.getTussenvoegsel());
             pst.setString(4, reiziger.getAchternaam());
             pst.setDate(5, reiziger.getGeboorteDatum());
             pst.execute();
@@ -63,7 +63,7 @@ public class ReizigerDAOPsql implements ReizigerDao {
             PreparedStatement pst = connection.prepareStatement(q);
             pst.setInt(1, reiziger.getId());
             pst.setString(2, reiziger.getVoorletters());
-            pst.setString(3, reiziger.getTussenvoegel());
+            pst.setString(3, reiziger.getTussenvoegsel());
             pst.setString(4, reiziger.getAchternaam());
             pst.setDate(5, reiziger.getGeboorteDatum());
             pst.setInt(6, reiziger.getId());
