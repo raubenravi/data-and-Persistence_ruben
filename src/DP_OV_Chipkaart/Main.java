@@ -1,7 +1,9 @@
 package DP_OV_Chipkaart;
 
 import DP_OV_Chipkaart.Connections.ConnectionDatabase;
-import DP_OV_Chipkaart.DaoPsql.AdressDAOPsql;
+import DP_OV_Chipkaart.Dao.AdresDao;
+import DP_OV_Chipkaart.Dao.ReizigerDao;
+import DP_OV_Chipkaart.DaoPsql.AdresDAOPsql;
 import DP_OV_Chipkaart.DaoPsql.OvChipKaartDaoPsql;
 import DP_OV_Chipkaart.DaoPsql.ProductDaoPsql;
 import DP_OV_Chipkaart.DaoPsql.ReizigerDAOPsql;
@@ -9,7 +11,11 @@ import DP_OV_Chipkaart.Domain.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+
+
+
 
 public class Main {
     public static void main(String [] args) throws Exception {
@@ -28,7 +34,15 @@ public class Main {
             System.out.println(reiziger_id + " " + voorletters + " " + (tussenvoegsel == null ? "" : tussenvoegsel)  + " " + achternaam + " (" + geboorteDatum + ")");
         }
         pst.close();
-
+        ProductDaoPsql productDao = new ProductDaoPsql(connection);
+        OvChipKaartDaoPsql ovChipkaartDao = new OvChipKaartDaoPsql(connection, productDao, null);
+        AdresDAOPsql adressDAOPsql = new AdresDAOPsql(connection);
+        ReizigerDAOPsql daoReiziger = new ReizigerDAOPsql(connection, adressDAOPsql, ovChipkaartDao);
+        adressDAOPsql.setReizigerDAOPsql(daoReiziger);
+        testReizigerDAO(daoReiziger);
+        testReizigerP3(daoReiziger, adressDAOPsql);
+        connection.getConnection().close();
+        /*
         String gbdatum = "1981-03-14";
         Adress adress = new Adress(25, "1122BB", "22a", "KorteStraat", "London", null);
         Reiziger sietske = new Reiziger(80, "S", "a", "Boers", java.sql.Date.valueOf(gbdatum), adress);
@@ -84,7 +98,83 @@ public class Main {
         daoReiziger.delete(jan);
 
         //daoReiziger.findAll();
+         */
 
     }
+    /**
+     * P2. Reiziger DAO: persistentie van een klasse
+     *
+     * Deze methode test de CRUD-functionaliteit van de Reiziger DAO
+     *
+     * @throws SQLException
+     */
+    private static void testReizigerDAO(ReizigerDao rdao) throws Exception {
+        System.out.println("\n---------- Test ReizigerDAO -------------");
+
+        // Haal alle reizigers op uit de database
+        List<Reiziger> reizigers = rdao.findAll();
+        System.out.println("[Test] ReizigerDAO.findAll() geeft de volgende reizigers:");
+        for (Reiziger r : reizigers) {
+            System.out.println(r);
+        }
+        System.out.println();
+
+        // Maak een nieuwe reiziger aan en persisteer deze in de database
+        String gbdatum = "1981-03-14";
+        Reiziger sietske = new Reiziger(77, "S", "", "Boers", java.sql.Date.valueOf(gbdatum), null);
+        System.out.println(sietske.toString());
+        System.out.print("[Test] Eerst " + reizigers.size() + " reizigers, na ReizigerDAO.save() ");
+        rdao.save(sietske);
+        reizigers = rdao.findAll();
+        System.out.println(reizigers.size() + " reizigers\n");
+
+        System.out.println("het is zijn trouwdag en sietske krijgt een extra achernaam ");
+        sietske.setAchternaam("Broers-Oranje");
+        rdao.update(sietske);
+        System.out.println(rdao.findById(sietske.getId()));
+
+
+        reizigers = rdao.findAll();
+        System.out.println("reizigers voor ReizigerDAO.delete(): " + reizigers.size()  + "\n");
+        rdao.delete(sietske);
+        reizigers = rdao.findAll();
+        System.out.println(" reizigers na ReizigerDAO.delete() : "+ reizigers.size() + " reizigers\n");
+        System.out.println(rdao.findById(sietske.getId()));
+    }
+
+
+    private static void testReizigerP3(ReizigerDao rdao, AdresDao adao) throws Exception {
+        List<Reiziger> reizigers = rdao.findAll();
+        System.out.println("[Test] ReizigerDAO.findAll() geeft de volgende reizigers:");
+        for (Reiziger r : reizigers) {
+            System.out.println(r.toString());
+        }
+        System.out.println();
+
+        Reiziger reiziger = rdao.findById(1);
+        System.out.println(reiziger);
+        Adres backupAdres = reiziger.getAdress();
+        Adres adres = new Adres(25, "1122BB", "22", "Korte Straat", "London", reiziger);
+        reiziger.setAdress(adres);
+        rdao.update(reiziger);
+        reiziger = rdao.findById(1);
+        System.out.println(reiziger);
+        adres.setStraat("Lange Straat");
+        adao.update(adres);
+        reiziger = rdao.findById(1);
+        System.out.println(reiziger);
+        reiziger.setAdress(backupAdres);
+        rdao.update(reiziger);
+
+        List<Adres> adressen = adao.findAll();
+        System.out.println("[Test] AdresDAO.findAll() geeft de volgende adressen:");
+        for (Adres a : adressen) {
+            System.out.println(a.toString());
+        }
+        System.out.println();
+
+
+    }
+
 }
 

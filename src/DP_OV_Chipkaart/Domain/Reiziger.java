@@ -45,12 +45,12 @@ public class Reiziger {
         this.geboorteDatum = geboorteDatum;
     }
 
-    public Adress getAdress() {
-        return adress;
+    public Adres getAdress() {
+        return adres;
     }
 
-    public void setAdress(Adress adress) {
-        this.adress = adress;
+    public void setAdress(Adres adres) {
+        this.adres = adres;
     }
 
     public List<OvChipKaart> getOvkaarten() {
@@ -67,33 +67,34 @@ public class Reiziger {
     private String achternaam;
     private  java.sql.Date geboorteDatum;
 
-    private   Adress adress;
+    private Adres adres;
 
     private List<OvChipKaart> ovkaarten;
 
 
-    public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, java.sql.Date geboorteDatum, Adress adress){
+    public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, java.sql.Date geboorteDatum, Adres adres){
         this.id = id;
         this.voorletters = voorletters;
         this.tussenvoegel = tussenvoegel;
         this.achternaam = achternaam;
         this.geboorteDatum = geboorteDatum;
-        this.adress = adress;
+        this.adres = adres;
         this.ovkaarten = new ArrayList<OvChipKaart>();
     }
-    public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, java.sql.Date geboorteDatum, Adress adress,  List<OvChipKaart> ovkaarten) {
+    public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, java.sql.Date geboorteDatum, Adres adres, List<OvChipKaart> ovkaarten) {
         this.id = id;
         this.voorletters = voorletters;
         this.tussenvoegel = tussenvoegel;
         this.achternaam = achternaam;
         this.geboorteDatum = geboorteDatum;
-        this.adress = adress;
+        this.adres = adres;
         this.ovkaarten = ovkaarten;
     }
-
     public String toString(){
-        return String.valueOf(this.id) + " " + this.voorletters  + " " + this.tussenvoegel + " " + this.achternaam + " " + this.geboorteDatum;
-
+        return  toStringZonderAssocatie() +  (this.adres != null ? this.adres.toStringZonderAssocatie() : "");
+    }
+    public String toStringZonderAssocatie(){
+        return  "Reiziger{"  +String.valueOf(this.id) + " " + this.voorletters  + " " + this.tussenvoegel + " " + this.achternaam + " " + this.geboorteDatum + "}";
     }
 }
 

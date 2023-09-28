@@ -1,7 +1,5 @@
 package DP_OV_Chipkaart.Connections;
 
-import DP_OV_Chipkaart.DaoPsql.AdressDAOPsql;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

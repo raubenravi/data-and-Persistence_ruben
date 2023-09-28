@@ -1,6 +1,6 @@
 package DP_OV_Chipkaart.Domain;
 
-public class Adress {
+public class Adres {
     private  int id;
     private Reiziger reiziger;
     private String postcode;
@@ -8,7 +8,7 @@ public class Adress {
     private String straat;
     private String woonplaats;
 
-    public Adress(int id, String postcode, String huisnummer, String straat, String woonplaats, Reiziger reiziger){
+    public Adres(int id, String postcode, String huisnummer, String straat, String woonplaats, Reiziger reiziger){
         this.id = id;
         this.reiziger = reiziger;
         this.postcode = postcode;
@@ -63,5 +63,14 @@ public class Adress {
 
     public void setWoonplaats(String woonplaats) {
         this.woonplaats = woonplaats;
+    }
+
+    @Override
+    public String toString() {
+        return this.toStringZonderAssocatie() + (reiziger != null ? reiziger.toStringZonderAssocatie() : ""  );
+    }
+
+    public String toStringZonderAssocatie(){
+        return "Adres{" + String.valueOf(this.id) + this.postcode + " " + this.huisnummer + " "+ this.straat  + " " + this.woonplaats + "} ";
     }
 }

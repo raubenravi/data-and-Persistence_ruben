@@ -1,7 +1,7 @@
 package DP_OV_Chipkaart.DaoPsql;
 
-import DP_OV_Chipkaart.Dao.AdressDao;
-import DP_OV_Chipkaart.Domain.Adress;
+import DP_OV_Chipkaart.Dao.AdresDao;
+import DP_OV_Chipkaart.Domain.Adres;
 import DP_OV_Chipkaart.Connections.ConnectionDatabase;
 import DP_OV_Chipkaart.Domain.Reiziger;
 
@@ -9,51 +9,60 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdressDAOPsql implements AdressDao {
+public class AdresDAOPsql implements AdresDao {
+
+    public void setReizigerDAOPsql(ReizigerDAOPsql reizigerDAOPsql) {
+        this.reizigerDAOPsql = reizigerDAOPsql;
+    }
 
     ReizigerDAOPsql reizigerDAOPsql;
     static Connection connection;
-    public AdressDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection) throws SQLException {
+    public AdresDAOPsql(ConnectionDatabase.ConnectionDatabaseIsntance connection) throws SQLException {
          this.connection = connection.getConnection();
          this.reizigerDAOPsql = reizigerDAOPsql;
     }
 
-    public boolean save(Adress adress) throws SQLException {
+    public boolean save(Adres adres) throws SQLException {
         String q = "INSERT INTO public.adres(adres_id , postcode, huisnummer , straat, woonplaats, reiziger_id) " +
                 "VALUES(?, ?, ?, ? , ?, ?) ;" ;
         PreparedStatement pst = connection.prepareStatement(q);
-        pst.setInt(1, adress.getId());
-        pst.setString(2, adress.getPostcode());
-        pst.setString(3, adress.getHuisnummer());
-        pst.setString(4, adress.getStraat());
-        pst.setString(5, adress.getWoonplaats());
-        pst.setInt(6, adress.getReiziger().getId());
+        pst.setInt(1, adres.getId());
+        pst.setString(2, adres.getPostcode());
+        pst.setString(3, adres.getHuisnummer());
+        pst.setString(4, adres.getStraat());
+        pst.setString(5, adres.getWoonplaats());
+        pst.setInt(6, adres.getReiziger().getId());
         pst.execute();
         pst.close();
         return true;
     }
 
-    public boolean update(Adress adress) throws SQLException {
-        String q = "UPDATE reiziger" +
-                "SET reiziger_id = ? , postcode = ?, huisnummer = ? , straat = ?, woonplaats = ?" +
-                "WHERE reiziger_id = ?;" ;
-        PreparedStatement pst = connection.prepareStatement(q);
-        pst.setInt(1, adress.getId());
-        pst.setString(2, adress.getPostcode());
-        pst.setString(3, adress.getHuisnummer());
-        pst.setString(4, adress.getStraat());
-        pst.setString(5, adress.getWoonplaats());
-        pst.setInt(6, adress.getReiziger().getId());
-        pst.execute();
-        pst.close();
-        return true;
+    public boolean update(Adres adres) throws SQLException {
+        try {
+            String q = "UPDATE adres " +
+                    "SET postcode = ? , huisnummer = ? , straat = ?, woonplaats = ? , reiziger_id = ?" +
+                    "WHERE adres_id = ?;";
+            PreparedStatement pst = connection.prepareStatement(q);
+            pst.setString(1, adres.getPostcode());
+            pst.setString(2, adres.getHuisnummer());
+            pst.setString(3, adres.getStraat());
+            pst.setString(4, adres.getWoonplaats());
+            pst.setInt(5, adres.getReiziger().getId());
+            pst.setInt(6, adres.getId());
+            pst.execute();
+            pst.close();
+            return true;
+        }catch (Exception e){
+            System.out.println(e);
+            return false;
+        }
     }
 
-    public boolean delete(Adress adress) throws SQLException {
+    public boolean delete(Adres adres) throws SQLException {
         try {
             String q = "DELETE FROM adres WHERE adres_id = ?;" ;
             PreparedStatement pst = connection.prepareStatement(q);
-            pst.setInt(1,adress.getId());
+            pst.setInt(1, adres.getId());
             pst.execute();
             pst.close();
             return  true;
@@ -63,7 +72,7 @@ public class AdressDAOPsql implements AdressDao {
         }
     }
 
-    public Adress findByReiziger(Reiziger reiziger) throws SQLException {
+    public Adres findByReiziger(Reiziger reiziger) throws SQLException {
         try {
             String q = "Select * FROM adres WHERE reiziger_id = ?;";
             PreparedStatement pst = connection.prepareStatement(q);
@@ -79,18 +88,18 @@ public class AdressDAOPsql implements AdressDao {
             String huisnummer = resultSet.getString(3);
             String straat = resultSet.getString(4);
             String woonplaats = resultSet.getString(5);
-            int reiziger_id = resultSet.getInt(6);
+           // int reiziger_id = resultSet.getInt(6);
             //}
             pst.close();
-            return new Adress(adres_id, postcode, huisnummer, straat, woonplaats, reiziger);
+            return new Adres(adres_id, postcode, huisnummer, straat, woonplaats, reiziger);
         }catch (Exception e){
             return  null;
         }
     }
 
 
-    public List<Adress> findAll() throws Exception {
-        List<Adress> lijst = new ArrayList<>();
+    public List<Adres> findAll() throws Exception {
+        List<Adres> lijst = new ArrayList<>();
         String q = "Select * FROM adres" ;
         PreparedStatement pst = connection.prepareStatement(q);
         ResultSet resultSet = pst.executeQuery();
@@ -102,7 +111,7 @@ public class AdressDAOPsql implements AdressDao {
             String woonplaats = resultSet.getString(5);
             int reiziger_id = resultSet.getInt(6);
             Reiziger reiziger = reizigerDAOPsql.findById(reiziger_id);
-            lijst.add( new Adress(adress_id, postcode, huisnummer, straat, woonplaats, reiziger));
+            lijst.add( new Adres(adress_id, postcode, huisnummer, straat, woonplaats, reiziger));
         }
         pst.close();
         return lijst;
