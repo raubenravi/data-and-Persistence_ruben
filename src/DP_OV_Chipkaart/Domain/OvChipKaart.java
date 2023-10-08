@@ -5,14 +5,14 @@ import java.util.List;
 
 public class OvChipKaart {
     private int id;
-    private  int klasse;
+    private int klasse;
     private java.sql.Date geldigTot;
     private double saldo;
     private Reiziger reiziger;
 
     public List<Product> products;
 
-    public OvChipKaart(int id, int klasse, java.sql.Date geldigTot, double saldo, Reiziger reiziger){
+    public OvChipKaart(int id, int klasse, java.sql.Date geldigTot, double saldo, Reiziger reiziger) {
         this.id = id;
         this.klasse = klasse;
         this.geldigTot = geldigTot;
@@ -65,7 +65,42 @@ public class OvChipKaart {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public boolean voegToeProduct  (Product product){
+        try {
+            products.add(product);
+            return true;
+        }catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("OvChipKaart {")
+                .append(this.id)
+                .append(" ")
+                .append(this.klasse)
+                .append(" ")
+                .append(this.geldigTot)
+                .append(" ")
+                .append(this.saldo)
+
+                .append("} products={");
+
+        if (products != null) {
+            for (Product product : products) {
+                sb.append(product.getNaanm())
+                        .append(" ")
+                        .append(product.getBeschrijving())
+                        .append(", ");
+            }
+        }
+
+        sb.append("}");
+
+        return sb.toString();
     }
 }

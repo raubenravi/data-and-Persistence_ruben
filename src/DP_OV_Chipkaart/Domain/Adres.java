@@ -67,10 +67,9 @@ public class Adres {
 
     @Override
     public String toString() {
-        return this.toStringZonderAssocatie() + (reiziger != null ? reiziger.toStringZonderAssocatie() : ""  );
+        return "Adres{" + String.valueOf(this.id) + this.postcode + " " + this.huisnummer + " "+ this.straat  + " " + this.woonplaats + "} " +
+                "Reiziger{"  +String.valueOf(this.reiziger.getId()) + " " + this.reiziger.getVoorletters()  + " " +
+                (this.reiziger.getTussenvoegsel() == null ? "" : this.reiziger.getTussenvoegsel())  + " " + this.reiziger.getAchternaam() + " " + this.reiziger.getGeboorteDatum() + "}";
     }
 
-    public String toStringZonderAssocatie(){
-        return "Adres{" + String.valueOf(this.id) + this.postcode + " " + this.huisnummer + " "+ this.straat  + " " + this.woonplaats + "} ";
-    }
 }

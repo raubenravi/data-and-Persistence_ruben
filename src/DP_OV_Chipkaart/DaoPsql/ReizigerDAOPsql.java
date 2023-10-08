@@ -35,11 +35,11 @@ public class ReizigerDAOPsql implements ReizigerDao {
             pst.setString(4, reiziger.getAchternaam());
             pst.setDate(5, reiziger.getGeboorteDatum());
             pst.execute();
+            adressDAOPsql.save(reiziger.getAdress());
 
-            //adres controleren al het bestaat, zo ja update anders save
-            //TODO controleren met printen enzo
-            if(adressDAOPsql.findByReiziger(reiziger) != null){
-                adressDAOPsql.save(reiziger.getAdress());
+
+            for(OvChipKaart kaart : reiziger.getOvkaarten() ){
+                ovChipKaartDao.save(kaart);
             }
 
             //adres controleren al het bestaat, zo ja update anders save
@@ -55,7 +55,7 @@ public class ReizigerDAOPsql implements ReizigerDao {
     public boolean update(Reiziger reiziger) throws SQLException {
         try {
 
-            Adres oudAdres = adressDAOPsql.findByReiziger(reiziger);
+
 
             String q = "UPDATE reiziger " +
                     "SET reiziger_id = ? , voorletters = ?, tussenvoegsel = ? , achternaam = ?, geboortedatum = ?" +
@@ -70,15 +70,10 @@ public class ReizigerDAOPsql implements ReizigerDao {
             pst.execute();
             pst.close();
 
-            Adres nieuwAdres = reiziger.getAdress();
-            if(oudAdres != null){
-                if (oudAdres.getId() != nieuwAdres.getId()  ) {
-                    adressDAOPsql.delete(oudAdres);
-                    adressDAOPsql.save(nieuwAdres);
-                }else {
-                    adressDAOPsql.update(nieuwAdres);
-                }
-            }
+                    adressDAOPsql.update(reiziger.getAdress());
+                    for(OvChipKaart kaart : reiziger.getOvkaarten()){
+                        ovChipKaartDao.update(kaart);
+                    }
 
 
 
@@ -91,18 +86,13 @@ public class ReizigerDAOPsql implements ReizigerDao {
 
     public boolean delete(Reiziger reiziger) throws SQLException {
 
-        if(reiziger.getAdress() != null){
-            adressDAOPsql.delete(reiziger.getAdress());
-        }
-
+        adressDAOPsql.delete(reiziger.getAdress());
 
         if(reiziger.getOvkaarten().isEmpty() == false){
             for(OvChipKaart ovkaart : reiziger.getOvkaarten()){
                 ovChipKaartDao.delete(ovkaart);
             }
         }
-
-
         try {
             String q = "DELETE  FROM reiziger WHERE reiziger_id = ?;";
             PreparedStatement pst = connection.prepareStatement(q);

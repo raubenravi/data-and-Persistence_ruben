@@ -10,7 +10,7 @@ public interface  OvChipkaartDao {
     boolean save(OvChipKaart ovKaart) throws Exception;
     boolean update(OvChipKaart ovKaart) throws SQLException;
     boolean delete(OvChipKaart ovKaart) throws SQLException;
-    OvChipKaart findById(int id) throws Exception;
-    List<OvChipKaart> findByReiziger(Reiziger reiziger) throws SQLException;
-    List<OvChipKaart> findAll() throws SQLException;
+    OvChipKaart findByNR(int id) throws Exception;
+    List<OvChipKaart> findByReiziger(Reiziger reiziger) throws Exception;
+    List<OvChipKaart> findAll() throws Exception;
 }

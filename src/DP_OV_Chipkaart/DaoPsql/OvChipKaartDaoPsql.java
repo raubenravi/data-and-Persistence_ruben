@@ -36,7 +36,7 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
         pst.setDouble(4, ovKaart.getSaldo());
         pst.setInt(5, ovKaart.getReiziger().getId());
         pst.execute();
-
+        pst.close();
       //  System.out.println(reizigerDao.findAll().contains(ovKaart.reiziger));
       //  if (reizigerDao.findById(ovKaart.reiziger.reiziger_id) == null){
         //    reizigerDao.save(ovKaart.reiziger);
@@ -62,17 +62,33 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
 
 
     public boolean update(OvChipKaart ovKaart) throws SQLException {
-        String q = "UPDATE reiziger " +
-                "SET reiziger_id = ? , voorletters = ?, tussenvoegsel = ? , achternaam = ?, geboortedatum = ?" +
-                "WHERE reiziger_id = ?;";
-        PreparedStatement pst = connection.prepareStatement(q);
-        return true;
+        try {
+            String q = "UPDATE ov_chipkaart " +
+                    "SET geldig_tot = ?, klasse = ?, saldo = ?, reiziger_id = ? " +
+                    "WHERE kaart_nummer = ?";
+
+            PreparedStatement pst = connection.prepareStatement(q);
+            pst.setDate(1, ovKaart.getGeldigTot());
+            pst.setInt(2, ovKaart.getKlasse());
+            pst.setDouble(3, ovKaart.getSaldo());
+            pst.setInt(4, ovKaart.getReiziger().getId());
+            pst.close();
+            return true;
+
+        }catch (Exception e){
+            System.out.println(e);
+            return false;
+        }
     }
 
     public boolean delete(OvChipKaart ovKaart) throws SQLException {
         try {
             String q = "DELETE FROM ov_chipkaart WHERE kaart_nummer = ?;";
             PreparedStatement pst = connection.prepareStatement(q);
+            pst.setInt(1,ovKaart.getId());
+            pst.execute();
+            q = "DELETE FROM ov_chipkaart_product WHERE kaart_nummer = ?;";
+            pst = connection.prepareStatement(q);
             pst.setInt(1,ovKaart.getId());
             pst.execute();
             pst.close();
@@ -83,7 +99,7 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
 
     }
 
-    public OvChipKaart findById(int id) throws Exception {
+    public OvChipKaart findByNR(int id) throws Exception {
         String q = "Select * FROM ov_chipkaart WHERE kaart_nummer = ?";
         PreparedStatement pst = connection.prepareStatement(q);
         pst.setInt(1, id);
@@ -96,11 +112,14 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
         int reizigerId = resultSet.getInt(5);
         Reiziger reiziger = reizigerDAO.findById(reizigerId);
         OvChipKaart ovkaart = new OvChipKaart(id, klasse, geldigTot, saldo, reiziger );
+        for(Product product : productDao.findByOVchipkaart(ovkaart)){
+            ovkaart.voegToeProduct(product);
+        }
         pst.close();
         return ovkaart;
     }
 
-    public List<OvChipKaart> findByReiziger(Reiziger reiziger) throws SQLException {
+    public List<OvChipKaart> findByReiziger(Reiziger reiziger) throws Exception {
         List<OvChipKaart> lijst = new ArrayList<>();
         String q = "Select * FROM ov_chipkaart WHERE reiziger_id = ? " ;
         PreparedStatement pst = connection.prepareStatement(q);
@@ -113,13 +132,40 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
             double saldo = resultSet.getDouble(4);
             int reizigerId = resultSet.getInt(5);
             OvChipKaart ovkaart = new OvChipKaart(id, klasse, geldigTot, saldo, reiziger );
+
+            for(Product product : productDao.findByOVchipkaart(ovkaart)){
+                ovkaart.voegToeProduct(product);
+            }
+
             lijst.add(ovkaart);
         }
         pst.close();
         return lijst;
     }
 
-    public List<OvChipKaart> findAll() throws SQLException {
-        return null;
+    public List<OvChipKaart> findAll() throws Exception {
+        List<OvChipKaart> lijst = new ArrayList<>();
+        String q = "Select * FROM ov_chipkaart  ";
+        PreparedStatement pst = connection.prepareStatement(q);
+        ResultSet resultSet = pst.executeQuery();
+        while (resultSet.next()) {
+            int id = resultSet.getInt(1);
+            java.sql.Date geldigTot = resultSet.getDate(2);
+            int klasse = resultSet.getInt(3);
+            double saldo = resultSet.getDouble(4);
+            int reizigerId = resultSet.getInt(5);
+            Reiziger reiziger = reizigerDAO.findById(reizigerId);
+            OvChipKaart ovkaart = new OvChipKaart(id, klasse, geldigTot, saldo, reiziger );
+            List<Product> producten =  productDao.findByOVchipkaart(ovkaart);
+            if(producten != null){
+                for(Product product : producten){
+                    ovkaart.voegToeProduct(product);
+                }
+            }
+
+            lijst.add(ovkaart);
+        }
+        pst.close();
+        return lijst;
     }
 }

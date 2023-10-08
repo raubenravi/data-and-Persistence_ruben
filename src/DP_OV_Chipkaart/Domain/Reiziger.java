@@ -61,6 +61,31 @@ public class Reiziger {
         this.ovkaarten = ovkaarten;
     }
 
+    public boolean verwijderOVChipkaart (OvChipKaart ovKaart){
+        try {
+            for(OvChipKaart huidigeKaart : this.ovkaarten ){
+                if (ovKaart.getId() == huidigeKaart.getId() ){
+                    ovkaarten.remove(huidigeKaart);
+                    return true;
+                }
+            }
+            return false;
+        }catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+    public boolean voegToeOVChipkaart  (OvChipKaart ovKaart){
+        try {
+            ovkaarten.add(ovKaart);
+            return true;
+        }catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
     private int id;
     private String voorletters;
     private String tussenvoegsel;
@@ -90,11 +115,26 @@ public class Reiziger {
         this.adres = adres;
         this.ovkaarten = ovkaarten;
     }
-    public String toString(){
-        return  toStringZonderAssocatie() +  (this.adres != null ? this.adres.toStringZonderAssocatie() : "");
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Reiziger{")
+                .append(id).append(" ")
+                .append(voorletters).append(" ")
+                .append(tussenvoegsel != null ? tussenvoegsel + " " : "")
+                .append(achternaam).append(" ")
+                .append(geboorteDatum).append("}");
+
+        if (adres != null) {
+            builder.append(" Adres{")
+                    .append(adres.getPostcode()).append(" ")
+                    .append(adres.getHuisnummer()).append(" ")
+                    .append(adres.getStraat()).append(" ")
+                    .append(adres.getWoonplaats()).append("}");
+        }
+
+        return builder.toString();
     }
-    public String toStringZonderAssocatie(){
-        return  "Reiziger{"  +String.valueOf(this.id) + " " + this.voorletters  + " " +  (this.tussenvoegsel == null ? "" : this.tussenvoegsel)  + " " + this.achternaam + " " + this.geboorteDatum + "}";
-    }
+
+
 }
 

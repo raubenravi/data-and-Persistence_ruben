@@ -2,6 +2,8 @@ package DP_OV_Chipkaart;
 
 import DP_OV_Chipkaart.Connections.ConnectionDatabase;
 import DP_OV_Chipkaart.Dao.AdresDao;
+import DP_OV_Chipkaart.Dao.OvChipkaartDao;
+import DP_OV_Chipkaart.Dao.ProductDao;
 import DP_OV_Chipkaart.Dao.ReizigerDao;
 import DP_OV_Chipkaart.DaoPsql.AdresDAOPsql;
 import DP_OV_Chipkaart.DaoPsql.OvChipKaartDaoPsql;
@@ -20,6 +22,11 @@ import java.util.List;
 public class Main {
     public static void main(String [] args) throws Exception {
 
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+        System.out.println(sqlDate);
+
         //P1
         ConnectionDatabase.ConnectionDatabaseIsntance connection = new  ConnectionDatabase.ConnectionDatabaseIsntance();
         String q = "SELECT reiziger_id, voorletters, tussenvoegsel, achternaam, geboortedatum FROM reiziger";
@@ -34,13 +41,17 @@ public class Main {
             System.out.println(reiziger_id + " " + voorletters + " " + (tussenvoegsel == null ? "" : tussenvoegsel)  + " " + achternaam + " (" + geboorteDatum + ")");
         }
         pst.close();
-        ProductDaoPsql productDao = new ProductDaoPsql(connection);
+        ProductDaoPsql productDao = new ProductDaoPsql(connection, null);
         OvChipKaartDaoPsql ovChipkaartDao = new OvChipKaartDaoPsql(connection, productDao, null);
         AdresDAOPsql adressDAOPsql = new AdresDAOPsql(connection);
         ReizigerDAOPsql daoReiziger = new ReizigerDAOPsql(connection, adressDAOPsql, ovChipkaartDao);
+        productDao.setOvChipKaartDao(ovChipkaartDao);
         adressDAOPsql.setReizigerDAOPsql(daoReiziger);
+
         testReizigerDAO(daoReiziger);
-        testReizigerP3(daoReiziger, adressDAOPsql);
+        //testReizigerP3(daoReiziger, adressDAOPsql);
+        ovChipkaartDao.setReizigerDAOPsql(daoReiziger);
+        testp5(productDao, ovChipkaartDao);
         connection.getConnection().close();
     }
 
@@ -102,7 +113,7 @@ public class Main {
         reiziger.setAdress(adres);
         rdao.update(reiziger);
         reiziger = rdao.findById(1);
-        System.out.println(reiziger);
+        System.out.println(reiziger.toString());
         System.out.print("De reiziger gaat wordt premie: ");
         adres.setStraat("Downing street");
         adao.update(adres);
@@ -123,6 +134,19 @@ public class Main {
         System.out.println();
 
 
+    }
+
+
+    private  static  void testp5(ProductDao pdao, OvChipkaartDao ovChipkaartDao) throws Exception {
+
+        for(OvChipKaart ovChipKaart : ovChipkaartDao.findAll()){
+            System.out.println(ovChipKaart.toString());
+        }
+
+
+        for(Product product : pdao.findAll()){
+            System.out.println(product.toString());
+        }
 
     }
 
