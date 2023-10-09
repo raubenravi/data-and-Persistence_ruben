@@ -123,16 +123,15 @@ public class ProductDaoPsql implements ProductDao {
 
     public List<Product> findAll() throws SQLException{
         try {
-            String q = "SELECT product.product_nummer, product.naam, product.beschrijving , product.prijs" +
-                    "FROM product";
+            String q = "SELECT product_nummer, naam, beschrijving , prijs FROM product;" ;
             PreparedStatement pst = connection.prepareStatement(q);
             ResultSet resultSet = pst.executeQuery();
             List<Product> lijst = new ArrayList<>();
             while (resultSet.next()) {
                 int productNummer = resultSet.getInt(1);
-                String naam = resultSet.getString(3);
-                String beschrijving = resultSet.getString(4);
-                int prijs = resultSet.getInt(5);
+                String naam = resultSet.getString(2);
+                String beschrijving = resultSet.getString(3);
+                int prijs = resultSet.getInt(4);
 
                 Product product = new Product(productNummer, naam, beschrijving, prijs);
 
