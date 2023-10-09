@@ -143,7 +143,6 @@ public class Main {
             System.out.println(ovChipKaart.toString());
         }
 
-
         for(Product product : pdao.findAll()){
             System.out.println(product.toString());
         }

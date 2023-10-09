@@ -133,8 +133,11 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
             int reizigerId = resultSet.getInt(5);
             OvChipKaart ovkaart = new OvChipKaart(id, klasse, geldigTot, saldo, reiziger );
 
-            for(Product product : productDao.findByOVchipkaart(ovkaart)){
-                ovkaart.voegToeProduct(product);
+            List<Product> products = productDao.findByOVchipkaart(ovkaart);
+            if (products != null) {
+                for (Product product : products) {
+                    ovkaart.voegToeProduct(product);
+                }
             }
 
             lijst.add(ovkaart);
