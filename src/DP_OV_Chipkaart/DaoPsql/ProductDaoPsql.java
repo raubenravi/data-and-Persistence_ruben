@@ -96,6 +96,7 @@ public class ProductDaoPsql implements ProductDao {
                     "ON ov_chipkaart_product.product_nummer = product.product_nummer" +
                     "where ov_chipkaart_product.kaart_nummer = ?";
             PreparedStatement pst = connection.prepareStatement(q);
+            pst.setInt(1, ovChipkaart.getId());
             ResultSet resultSet = pst.executeQuery();
             List<Product> lijst = new ArrayList<>();
             while (resultSet.next()) {

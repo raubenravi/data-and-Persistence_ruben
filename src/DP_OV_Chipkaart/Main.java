@@ -48,7 +48,7 @@ public class Main {
         productDao.setOvChipKaartDao(ovChipkaartDao);
         adressDAOPsql.setReizigerDAOPsql(daoReiziger);
 
-        testReizigerDAO(daoReiziger);
+      //  testReizigerDAO(daoReiziger);
         //testReizigerP3(daoReiziger, adressDAOPsql);
         ovChipkaartDao.setReizigerDAOPsql(daoReiziger);
         testp5(productDao, ovChipkaartDao);
