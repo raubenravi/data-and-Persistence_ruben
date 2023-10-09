@@ -90,7 +90,7 @@ public class ProductDaoPsql implements ProductDao {
 
     public List<Product> findByOVchipkaart(OvChipKaart ovChipkaart) throws Exception {
         try {
-            String q = "SELECT product.product_nummer, ov_chipkaart_product.kaart_nummer , product.naam, product..beschrijving , product..prijs" +
+            String q = "SELECT product.product_nummer, ov_chipkaart_product.kaart_nummer , product.naam, product.beschrijving , product.prijs" +
                     "FROM product" +
                     "JOIN ov_chipkaart_product" +
                     "ON ov_chipkaart_product.product_nummer = product.product_nummer" +
@@ -141,11 +141,12 @@ public class ProductDaoPsql implements ProductDao {
 
             for(Product product : lijst){
                 q = "SELECT ov_chipkaart_product.kaart_nummer " +
-                        "FROM product" +
-                        "JOIN ov_chipkaart_product" +
-                        "ON ov_chipkaart_product.product_nummer = product.product_nummer" +
-                        "where ov_chipkaart_product.product_nummer = ?";
+                        "FROM product " +
+                        "JOIN ov_chipkaart_product " +
+                        "ON ov_chipkaart_product.product_nummer = product.product_nummer " +
+                        "where ov_chipkaart_product.product_nummer = ? ;";
 
+                pst = connection.prepareStatement(q);
                 pst.setInt(1, product.getProductNummer());
                 resultSet = pst.executeQuery();
                 while (resultSet.next()) {
