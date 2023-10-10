@@ -119,6 +119,23 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
         return ovkaart;
     }
 
+    public OvChipKaart findByNRGeenAssocasiatie(int id) throws Exception {
+        String q = "Select * FROM ov_chipkaart WHERE kaart_nummer = ?";
+        PreparedStatement pst = connection.prepareStatement(q);
+        pst.setInt(1, id);
+        ResultSet resultSet = pst.executeQuery();
+        resultSet.next();
+        id = resultSet.getInt(1);
+        java.sql.Date geldigTot = resultSet.getDate(2);
+        int klasse = resultSet.getInt(3);
+        double saldo = resultSet.getDouble(4);
+        int reizigerId = resultSet.getInt(5);
+        Reiziger reiziger = reizigerDAO.findById(reizigerId);
+        OvChipKaart ovkaart = new OvChipKaart(id, klasse, geldigTot, saldo, reiziger );
+        pst.close();
+        return ovkaart;
+    }
+
     public List<OvChipKaart> findByReiziger(Reiziger reiziger) throws Exception {
         List<OvChipKaart> lijst = new ArrayList<>();
         String q = "Select * FROM ov_chipkaart WHERE reiziger_id = ? " ;

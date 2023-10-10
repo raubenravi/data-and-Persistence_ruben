@@ -102,13 +102,21 @@ public class ProductDaoPsql implements ProductDao {
             while (resultSet.next()) {
                 int productNummer = resultSet.getInt(1);
                 int ovChipkaartNummer = resultSet.getInt(2);
-                OvChipKaart ovChipKaart = ovChipKaartDao.findByNR(ovChipkaartNummer);
+                //OvChipKaart ovChipKaart = ovChipKaartDao.findByNR(ovChipkaartNummer);
+
                 String naam = resultSet.getString(3);
                 String beschrijving = resultSet.getString(4);
                 int prijs = resultSet.getInt(5);
-
                 Product product = new Product(productNummer, naam, beschrijving, prijs);
-                product.voegToeOVChipkaart(ovChipKaart);
+                q = "SELECT kaart_nummer " +
+                        "from ov_chipkaart_product " +
+                        "WHERE product_nummer = ? ;";
+                PreparedStatement pst2 = connection.prepareStatement(q);
+                pst2.setInt(1, ovChipkaartNummer );
+                ResultSet resultSet2 = pst2.executeQuery();
+                while (resultSet2.next()) {
+                    product.voegToeOVChipkaart(ovChipKaartDao.findByNRGeenAssocasiatie(resultSet.getInt(1)));
+                }
                 lijst.add(product);
             }
 
@@ -123,42 +131,34 @@ public class ProductDaoPsql implements ProductDao {
 
     public List<Product> findAll() throws SQLException{
         try {
-            String q = "SELECT product_nummer, naam, beschrijving , prijs FROM product;" ;
+            String q = "SELECT product.product_nummer, ov_chipkaart_product.kaart_nummer , product.naam, product.beschrijving , product.prijs " +
+                    "FROM product " +
+                    "JOIN ov_chipkaart_product " +
+                    "ON ov_chipkaart_product.product_nummer = product.product_nummer; ";
             PreparedStatement pst = connection.prepareStatement(q);
             ResultSet resultSet = pst.executeQuery();
             List<Product> lijst = new ArrayList<>();
             while (resultSet.next()) {
                 int productNummer = resultSet.getInt(1);
-                String naam = resultSet.getString(2);
-                String beschrijving = resultSet.getString(3);
-                int prijs = resultSet.getInt(4);
+                int ovChipkaartNummer = resultSet.getInt(2);
+                //OvChipKaart ovChipKaart = ovChipKaartDao.findByNR(ovChipkaartNummer);
 
+                String naam = resultSet.getString(3);
+                String beschrijving = resultSet.getString(4);
+                int prijs = resultSet.getInt(5);
                 Product product = new Product(productNummer, naam, beschrijving, prijs);
-
-
+                q = "SELECT kaart_nummer " +
+                        "from ov_chipkaart_product " +
+                        "WHERE product_nummer = ? ;";
+                PreparedStatement pst2 = connection.prepareStatement(q);
+                pst2.setInt(1, ovChipkaartNummer );
+                ResultSet resultSet2 = pst2.executeQuery();
+                while (resultSet2.next()) {
+                    product.voegToeOVChipkaart(ovChipKaartDao.findByNRGeenAssocasiatie(resultSet.getInt(1)));
+                }
                 lijst.add(product);
             }
 
-            for(Product product : lijst){
-                q = "SELECT ov_chipkaart_product.kaart_nummer " +
-                        "FROM product " +
-                        "JOIN ov_chipkaart_product " +
-                        "ON ov_chipkaart_product.product_nummer = product.product_nummer " +
-                        "where ov_chipkaart_product.product_nummer = ? ;";
-
-                pst = connection.prepareStatement(q);
-                pst.setInt(1, product.getProductNummer());
-                resultSet = pst.executeQuery();
-                while (resultSet.next()) {
-                    int ovkaartNummer = resultSet.getInt(1);
-                    OvChipKaart ovChipKaart = ovChipKaartDao.findByNR(ovkaartNummer);
-                    product.voegToeOVChipkaart(ovChipKaart);
-                }
-
-
-
-
-            }
             pst.close();
 
             return lijst;
