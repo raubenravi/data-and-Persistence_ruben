@@ -115,6 +115,7 @@ public class Reiziger {
         this.adres = adres;
         this.ovkaarten = ovkaarten;
     }
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Reiziger{")

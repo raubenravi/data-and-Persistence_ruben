@@ -68,11 +68,11 @@ public class Product {
 
         if (ovchipkaarten != null) {
             for (OvChipKaart ovKaart : ovchipkaarten) {
-                sb.append(ovKaart.getId()) // Assuming OvChipKaart has an 'id' property
+                sb.append(ovKaart.getId())
                         .append(", ")
-                        .append(ovKaart.getReiziger().getId()) // Assuming OvChipKaart has an 'id' property
+                        .append(ovKaart.getReiziger().getId())
                         .append(", ")
-                        .append(ovKaart.getReiziger().getAchternaam()) // Assuming OvChipKaart has an 'id' property
+                        .append(ovKaart.getReiziger().getAchternaam())
                         .append(", ");;
             }
         }
