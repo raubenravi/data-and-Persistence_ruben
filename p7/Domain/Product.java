@@ -14,7 +14,7 @@ public class Product {
     private int prijs;
 
     //bron: https://www.baeldung.com/hibernate-many-to-many
-    @ManyToMany(mappedBy = "products" , cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "products")
     private List<OvChipKaart> ovchipkaarten = new ArrayList<OvChipKaart>();;
 
     public Product(){}
