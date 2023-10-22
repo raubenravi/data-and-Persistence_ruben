@@ -36,19 +36,6 @@ public class ProductDaoPsql implements ProductDao {
         pst.setInt(4, product.getPrijs());
         pst.execute();
         pst.close();
-
-        /*
-        java.util.Date utilDate = new java.util.Date();
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        for(OvChipKaart ovChipKaart : product.getOvchipkaarts()){
-            q = "INSERT INTO public.produc (product_nummer , naam , beschrijving , prijs )"  +
-                    "VALUES(?, ?, ?, ?) ;" ;
-            pst.setInt(1,  ovChipKaart.getId());
-            pst.setInt(2, product.getProductNummer());
-            pst.setString(3, "saved");
-            pst.setDate(4, sqlDate );
-
-        } */
         return true;
     }
     public boolean update(Product product) throws SQLException {
@@ -120,42 +107,6 @@ public class ProductDaoPsql implements ProductDao {
             return null;
         }
     }
-    /*
-    public List<Product> findByOVchipkaart(OvChipKaart ovChipkaart) throws Exception {
-        try {
-            String q = "SELECT product.product_nummer, ov_chipkaart_product.kaart_nummer , product.naam, product.beschrijving , product.prijs " +
-                    "FROM product " +
-                    "JOIN ov_chipkaart_product " +
-                    "ON ov_chipkaart_product.product_nummer = product.product_nummer " +
-                    "where ov_chipkaart_product.kaart_nummer = ? ;";
-            PreparedStatement pst = connection.prepareStatement(q);
-            pst.setInt(1, ovChipkaart.getId());
-            ResultSet resultSet = pst.executeQuery();
-            List<Product> lijst = new ArrayList<>();
-            while (resultSet.next()) {
-                int productNummer = resultSet.getInt(1);
-                int ovChipkaartNummer = resultSet.getInt(2);
-                //OvChipKaart ovChipKaart = ovChipKaartDao.findByNR(ovChipkaartNummer);
-
-                String naam = resultSet.getString(3);
-                String beschrijving = resultSet.getString(4);
-                int prijs = resultSet.getInt(5);
-                Product product = new Product(productNummer, naam, beschrijving, prijs);
-                q = "SELECT kaart_nummer " +
-                        "from ov_chipkaart_product " +
-                        "WHERE product_nummer = ? ;";
-                PreparedStatement pst2 = connection.prepareStatement(q);
-                pst2.setInt(1, ovChipkaartNummer );
-                ResultSet resultSet2 = pst2.executeQuery();
-                while (resultSet2.next()) {
-                    product.voegToeOVChipkaart(ovChipKaartDao.findByNRGeenAssocasiatie(resultSet.getInt(1)));
-                }
-                lijst.add(product);
-            }
-
-            pst.close();
-
-     */
 
     public List<Product> findAll() throws SQLException{
         try {

@@ -116,7 +116,6 @@ public class ReizigerDAOPsql implements ReizigerDao {
                 System.out.println("Reiziger niet gevonden!");
                 return null;
             }
-            //resultSet.next();
             int reiziger_id = resultSet.getInt(1);
             String voorletters = resultSet.getString(2);
             String tussenvoegel = resultSet.getString(3);

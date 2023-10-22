@@ -37,10 +37,7 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
         pst.setInt(5, ovKaart.getReiziger().getId());
         pst.execute();
         pst.close();
-      //  System.out.println(reizigerDao.findAll().contains(ovKaart.reiziger));
-      //  if (reizigerDao.findById(ovKaart.reiziger.reiziger_id) == null){
-        //    reizigerDao.save(ovKaart.reiziger);
-        //}
+
 
         q = "INSERT INTO public.ov_chipkaart_product(kaart_nummer,product_nummer, status, last_update" +
                 "VALUES(?, ?, ?, ?) ;" ;

@@ -2,7 +2,6 @@ package nl.hu.dp.ovchip.Domain;
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
-
 @Entity
 @Table (name = "ov_chipkaart")
 public class OvChipKaart {
@@ -11,16 +10,19 @@ public class OvChipKaart {
     private int id;
     private int klasse;
     @Column(name = "geldig_tot")
-    private java.sql.Date geldigTot;
+    private Date geldigTot;
     private double saldo;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reiziger_id")
     private Reiziger reiziger;
-    @ManyToMany(mappedBy = "ovchipkaarten")
-    private List<Product> products;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE , CascadeType.PERSIST})
+    @JoinTable(name = "ov_chipkaart_product",
+            joinColumns = {@JoinColumn(name = "kaart_nummer"),},
+            inverseJoinColumns = {@JoinColumn(name = "product_nummer")})
+    private List<Product> products = new ArrayList<Product>();
 
     public  OvChipKaart(){}
-    public OvChipKaart(int id, int klasse, java.sql.Date geldigTot, double saldo, Reiziger reiziger) {
+    public OvChipKaart(int id, int klasse, Date geldigTot, double saldo, Reiziger reiziger) {
         this.id = id;
         this.klasse = klasse;
         this.geldigTot = geldigTot;
