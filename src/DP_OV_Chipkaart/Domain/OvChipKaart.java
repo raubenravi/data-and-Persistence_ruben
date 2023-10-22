@@ -1,6 +1,7 @@
 package DP_OV_Chipkaart.Domain;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OvChipKaart {
@@ -10,7 +11,7 @@ public class OvChipKaart {
     private double saldo;
     private Reiziger reiziger;
 
-    public List<Product> products;
+    public List<Product> products = new ArrayList<Product>();
 
     public OvChipKaart(int id, int klasse, java.sql.Date geldigTot, double saldo, Reiziger reiziger) {
         this.id = id;
@@ -65,15 +66,34 @@ public class OvChipKaart {
         return products;
     }
 
-    public boolean voegToeProduct  (Product product){
+    public boolean addProduct(Product product){
         try {
-            products.add(product);
-            return true;
+            if (products.contains(product)){
+                products.add(product);
+                product.removeOvChipkaart(this);
+                return true;
+            }
+            return false;
         }catch (Exception e) {
             System.out.println(e);
             return false;
         }
     }
+
+    public boolean removeProduct(Product product){
+        try {
+            if (products.contains(product)){
+                products.remove(product);
+                product.addOVChipkaart(this);
+                return true;
+            }
+            return false;
+        }catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
 
 
     public String toString() {

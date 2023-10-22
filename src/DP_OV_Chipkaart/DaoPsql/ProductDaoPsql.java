@@ -77,17 +77,50 @@ public class ProductDaoPsql implements ProductDao {
         return true;
     }
     public boolean delete(Product product) throws SQLException {
-        String q = "DELETE FROM product WHERE product_nummer = ?;";
+        String q = "DELETE FROM ov_chipkaart_product WHERE product_nummer = ?;";
         PreparedStatement pst = connection.prepareStatement(q);
         pst.setInt(1,product.getProductNummer());
         pst.execute();
-        q = "DELETE FROM ov_chipkaart_product WHERE product_nummer = ?;";
+        q = "DELETE FROM product WHERE product_nummer = ?;";
         pst.setInt(1,product.getProductNummer());
         pst.execute();
         pst.close();
         return true;
     }
 
+    public List<Product> findByOVchipkaart(OvChipKaart ovChipkaart) throws Exception {
+        try {
+            String q = "SELECT product.product_nummer , product.naam, product.beschrijving , product.prijs " +
+                    "FROM product " +
+                    "JOIN ov_chipkaart_product " +
+                    "ON ov_chipkaart_product.product_nummer = product.product_nummer " +
+                    "where ov_chipkaart_product.kaart_nummer = ? ;";
+            PreparedStatement pst = connection.prepareStatement(q);
+            pst.setInt(1, ovChipkaart.getId());
+            ResultSet resultSet = pst.executeQuery();
+            List<Product> lijst = new ArrayList<>();
+            while (resultSet.next()) {
+                int productNummer = resultSet.getInt(1);
+                String naam = resultSet.getString(2);
+                String beschrijving = resultSet.getString(3);
+                int prijs = resultSet.getInt(4);
+                Product product = new Product(productNummer, naam, beschrijving, prijs);
+                lijst.add(product);
+            }
+            for (Product product : lijst) {
+                product.addOVChipkaart(ovChipkaart);
+            }
+
+
+            pst.close();
+
+            return lijst;
+        }catch (Exception e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    /*
     public List<Product> findByOVchipkaart(OvChipKaart ovChipkaart) throws Exception {
         try {
             String q = "SELECT product.product_nummer, ov_chipkaart_product.kaart_nummer , product.naam, product.beschrijving , product.prijs " +
@@ -122,12 +155,7 @@ public class ProductDaoPsql implements ProductDao {
 
             pst.close();
 
-            return lijst;
-        }catch (Exception e){
-            System.out.println(e);
-            return null;
-        }
-    }
+     */
 
     public List<Product> findAll() throws SQLException{
         try {
@@ -141,8 +169,6 @@ public class ProductDaoPsql implements ProductDao {
             while (resultSet.next()) {
                 int productNummer = resultSet.getInt(1);
                 int ovChipkaartNummer = resultSet.getInt(2);
-                //OvChipKaart ovChipKaart = ovChipKaartDao.findByNR(ovChipkaartNummer);
-
                 String naam = resultSet.getString(3);
                 String beschrijving = resultSet.getString(4);
                 int prijs = resultSet.getInt(5);
@@ -151,10 +177,10 @@ public class ProductDaoPsql implements ProductDao {
                         "from ov_chipkaart_product " +
                         "WHERE product_nummer = ? ;";
                 PreparedStatement pst2 = connection.prepareStatement(q);
-                pst2.setInt(1, ovChipkaartNummer );
+                pst2.setInt(1, productNummer );
                 ResultSet resultSet2 = pst2.executeQuery();
                 while (resultSet2.next()) {
-                    product.voegToeOVChipkaart(ovChipKaartDao.findByNRGeenAssocasiatie(resultSet.getInt(1)));
+                    product.addOVChipkaart(ovChipKaartDao.findByNR(resultSet2.getInt(1)));
                 }
                 lijst.add(product);
             }

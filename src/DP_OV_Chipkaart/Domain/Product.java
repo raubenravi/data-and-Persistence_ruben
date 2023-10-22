@@ -1,5 +1,6 @@
 package DP_OV_Chipkaart.Domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Product {
@@ -7,7 +8,7 @@ public class Product {
     private String naanm;
     private String Beschrijving;
     private int prijs;
-    private List<OvChipKaart> ovchipkaarten;
+    private List<OvChipKaart> ovchipkaarten = new ArrayList<OvChipKaart>();
 
     public Product(int productNummer, String naam, String beschrijving, int prijs) {
         this.productNummer = productNummer;
@@ -16,15 +17,35 @@ public class Product {
         this.prijs = prijs;
     }
 
-    public boolean voegToeOVChipkaart  (OvChipKaart ovKaart){
+    public boolean addOVChipkaart(OvChipKaart ovKaart){
         try {
-            ovchipkaarten.add(ovKaart);
-            return true;
+            if (ovchipkaarten.contains(ovKaart)){
+                ovchipkaarten.add(ovKaart);
+                ovKaart.addProduct(this);
+                return true;
+            }
+            return false;
         }catch (Exception e) {
             System.out.println(e);
             return false;
         }
     }
+
+    public boolean removeOvChipkaart(OvChipKaart ovKaart){
+        try {
+            if (ovchipkaarten.contains(ovKaart)){
+                ovchipkaarten.remove(ovKaart);
+                ovKaart.removeProduct(this);
+                return true;
+            }
+            return false;
+        }catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+    }
+
+
     public int getProductNummer() {
         return productNummer;
     }

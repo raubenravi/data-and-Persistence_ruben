@@ -1,0 +1,25 @@
+<component name="libraryTable">
+  <library name="classmate-62">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/classmate-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/dom4j-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/hibernate-commons-annotations-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/hibernate-core-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/jakarta.activation-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/jakarta.persistence-api-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/jakarta.validation-api-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/jakarta.xml.bind-api-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/jandex-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/javassist-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/javax.json-api-1.1.4.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/javax.security.jacc-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/javax.servlet-api-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/jboss-logmanager-62.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/postgresql-42.4.1.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/stax-ex-1.8.2.jar!/" />
+      <root url="jar://$USER_HOME$/Documents/hibernate meuk/stax2-api-4.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

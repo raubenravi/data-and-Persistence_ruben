@@ -83,11 +83,11 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
 
     public boolean delete(OvChipKaart ovKaart) throws SQLException {
         try {
-            String q = "DELETE FROM ov_chipkaart WHERE kaart_nummer = ?;";
+            String q = "DELETE FROM ov_chipkaart_product WHERE kaart_nummer = ?;";
             PreparedStatement pst = connection.prepareStatement(q);
             pst.setInt(1,ovKaart.getId());
             pst.execute();
-            q = "DELETE FROM ov_chipkaart_product WHERE kaart_nummer = ?;";
+            q = "DELETE FROM ov_chipkaart WHERE kaart_nummer = ?;";
             pst = connection.prepareStatement(q);
             pst.setInt(1,ovKaart.getId());
             pst.execute();
@@ -113,25 +113,8 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
         Reiziger reiziger = reizigerDAO.findById(reizigerId);
         OvChipKaart ovkaart = new OvChipKaart(id, klasse, geldigTot, saldo, reiziger );
         for(Product product : productDao.findByOVchipkaart(ovkaart)){
-            ovkaart.voegToeProduct(product);
+            ovkaart.addProduct(product);
         }
-        pst.close();
-        return ovkaart;
-    }
-
-    public OvChipKaart findByNRGeenAssocasiatie(int id) throws Exception {
-        String q = "Select * FROM ov_chipkaart WHERE kaart_nummer = ?";
-        PreparedStatement pst = connection.prepareStatement(q);
-        pst.setInt(1, id);
-        ResultSet resultSet = pst.executeQuery();
-        resultSet.next();
-        id = resultSet.getInt(1);
-        java.sql.Date geldigTot = resultSet.getDate(2);
-        int klasse = resultSet.getInt(3);
-        double saldo = resultSet.getDouble(4);
-        int reizigerId = resultSet.getInt(5);
-        Reiziger reiziger = reizigerDAO.findById(reizigerId);
-        OvChipKaart ovkaart = new OvChipKaart(id, klasse, geldigTot, saldo, reiziger );
         pst.close();
         return ovkaart;
     }
@@ -153,7 +136,7 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
             List<Product> products = productDao.findByOVchipkaart(ovkaart);
             if (products != null) {
                 for (Product product : products) {
-                    ovkaart.voegToeProduct(product);
+                    ovkaart.addProduct(product);
                 }
             }
 
@@ -179,7 +162,7 @@ public class OvChipKaartDaoPsql implements OvChipkaartDao {
             List<Product> producten =  productDao.findByOVchipkaart(ovkaart);
             if(producten != null){
                 for(Product product : producten){
-                    ovkaart.voegToeProduct(product);
+                    ovkaart.addProduct(product);
                 }
             }
 
