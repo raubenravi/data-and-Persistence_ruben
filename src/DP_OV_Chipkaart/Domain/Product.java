@@ -19,7 +19,7 @@ public class Product {
 
     public boolean addOVChipkaart(OvChipKaart ovKaart){
         try {
-            if (ovchipkaarten.contains(ovKaart)){
+            if (!ovchipkaarten.contains(ovKaart)){
                 ovchipkaarten.add(ovKaart);
                 ovKaart.addProduct(this);
                 return true;

@@ -68,9 +68,9 @@ public class OvChipKaart {
 
     public boolean addProduct(Product product){
         try {
-            if (products.contains(product)){
+            if (!products.contains(product)){
                 products.add(product);
-                product.removeOvChipkaart(this);
+                product.addOVChipkaart(this);
                 return true;
             }
             return false;

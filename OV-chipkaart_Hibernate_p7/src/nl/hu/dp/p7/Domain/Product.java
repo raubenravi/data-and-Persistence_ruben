@@ -14,13 +14,8 @@ public class Product {
     private int prijs;
 
     //bron: https://www.baeldung.com/hibernate-many-to-many
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "ov_chipkaart_product",
-            joinColumns = { @JoinColumn(name = "product_nummer") },
-            inverseJoinColumns = { @JoinColumn(name = "kaart_nummer") }
-    )
-    private List<OvChipKaart> ovchipkaarten ;
+    @ManyToMany(mappedBy = "products" , cascade = CascadeType.ALL)
+    private List<OvChipKaart> ovchipkaarten = new ArrayList<OvChipKaart>();;
 
     public Product(){}
     public Product(int productNummer, String naam, String beschrijving, int prijs) {

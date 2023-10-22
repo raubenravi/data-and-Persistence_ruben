@@ -14,15 +14,15 @@ public class Reiziger {
     private String voorletters;
     private String tussenvoegsel;
     private String achternaam;
-    private  java.sql.Date geboorteDatum;
-    @OneToOne(fetch = FetchType.LAZY ,mappedBy = "reiziger")
+    private  Date geboorteDatum;
+    @OneToOne(fetch = FetchType.LAZY ,mappedBy = "reiziger", cascade = CascadeType.ALL ,  orphanRemoval = true)
     private Adres adres;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reiziger" )
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "reiziger",cascade = CascadeType.ALL ,orphanRemoval = true )
     private List<OvChipKaart> ovkaarten;
 
     public  Reiziger(){}
-    public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, java.sql.Date geboorteDatum, Adres adres){
+    public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, Date geboorteDatum, Adres adres){
         this.id = id;
         this.voorletters = voorletters;
         this.tussenvoegsel = tussenvoegel;
@@ -31,7 +31,7 @@ public class Reiziger {
         this.adres = adres;
         this.ovkaarten = new ArrayList<OvChipKaart>();
     }
-    public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, java.sql.Date geboorteDatum, Adres adres, List<OvChipKaart> ovkaarten) {
+    public Reiziger(int id, String voorletters, String tussenvoegel, String achternaam, Date geboorteDatum, Adres adres, List<OvChipKaart> ovkaarten) {
         this.id = id;
         this.voorletters = voorletters;
         this.tussenvoegsel = tussenvoegel;
